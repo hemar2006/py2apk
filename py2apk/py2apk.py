@@ -21,11 +21,8 @@ class Py2Apk():
             'app_name': input('App name: '),            
             'package_name': input('Package name: '),
             'version_name': input('Version: '), 
-            'icon': input('Icon: ') or ICON_FILE,         
-            'url': input('URL: ') or 'file:///assets/index.html',
-            'license': input('License: '), 
-            'author': input('Author: '), 
-            'author_email': input('Author email: ')
+            'icon_file': input('Icon: ') or ICON_FILE,         
+            'url_path': input('URL: ') or 'file:///assets/index.html',            
         }}
         with open('app.toml', 'w') as f:
             toml.dump(data_toml, f)
@@ -37,7 +34,7 @@ class Py2Apk():
         data['version_code'] = data['version_name'].split('.')[0]        
         self.render(GRADLE_FILE, 'build.gradle', data)
         self.render(HTML_FILE, 'src/main/assets/index.html', data)
-        self.icons(data['icon'])
+        self.icons(data['icon_file'])
 
     def build(self):
         data_toml = toml.load('app.toml')
@@ -55,7 +52,12 @@ class Py2Apk():
         file_name = os.path.basename(source)
         with open(source, 'r') as template_file:
             t = Template(template_file.read()).substitute(data)
-        with open(os.path.join(destination, file_name), 'w') as destination_file:
+        if not os.path.exists(destination):
+            try:
+                os.makedirs('/'.join(destination.split('/')[:-1]))
+            except:
+                pass
+        with open(destination, 'w') as destination_file:
             destination_file.write(t) 
 
     def icons(self, data):        
@@ -81,6 +83,7 @@ class Py2Apk():
         for size in sizes:
             path = os.path.join('src', 'main', 'res', size['name'])
             if not os.path.exists(path):
-                os.makedirs(path)           
-            im.thumbnail(size)
+                os.makedirs(path)
+            im = Image.open(data)
+            im.thumbnail((size['d'], size['d']))
             im.save(f'{path}/ic_launcher.{ext}')        

@@ -27,38 +27,39 @@ class Py2Apk():
         with open('app.toml', 'w') as f:
             toml.dump(data_toml, f)
         data = data_toml['data']
-        self.render(XML_FILE, 'src/main/AndroidManifest.xml', data)
+        self.render(XML_FILE, 'src/main/', data)
         dirs = data['package_name'].split('.')
         targetPath = os.path.join('src', 'main', 'java', *dirs)
-        self.render(JAVA_FILE, f'{targetPath}/MainActivity.java', data)
+        self.render(JAVA_FILE, f'{targetPath}/', data)
         data['version_code'] = data['version_name'].split('.')[0]        
-        self.render(GRADLE_FILE, 'build.gradle', data)
-        self.render(HTML_FILE, 'src/main/assets/index.html', data)
+        self.render(GRADLE_FILE, None, data)
+        self.render(HTML_FILE, 'src/main/assets/', data)
         self.icons(data['icon_file'])
 
     def build(self):
         data_toml = toml.load('app.toml')
         data = data_toml['data']
-        self.render(XML_FILE, 'src/main/AndroidManifest.xml', data)
+        self.render(XML_FILE, 'src/main/', data)
         dirs = data['package_name'].split('.')
         targetPath = os.path.join('src', 'main', 'java', *dirs)
-        self.render(JAVA_FILE, f'{targetPath}/MainActivity.java', data)
+        self.render(JAVA_FILE, f'{targetPath}/', data)
         data['version_code'] = data['version_name'].split('.')[0]        
-        self.render(GRADLE_FILE, 'build.gradle', data)
-        self.render(HTML_FILE, 'src/main/assets/index.html', data)
-        self.icons(data['icon'])
+        self.render(GRADLE_FILE, None, data)
+        self.render(HTML_FILE, 'src/main/assets/', data)
+        self.icons(data['icon_file'])
 
     def render(self, source, destination, data):
         file_name = os.path.basename(source)
         with open(source, 'r') as template_file:
             t = Template(template_file.read()).substitute(data)
-        if not os.path.exists(destination):
-            try:
-                os.makedirs('/'.join(destination.split('/')[:-1]))
-            except:
-                pass
-        with open(destination, 'w') as destination_file:
-            destination_file.write(t) 
+        if destination:
+            if not os.path.exists(destination):
+                os.makedirs(destination)       
+            with open(os.path.join(destination, file_name), 'w') as destination_file:
+                destination_file.write(t)
+        else:
+            with open(file_name, 'w') as destination_file:
+                destination_file.write(t)
 
     def icons(self, data):        
         sizes = [{

@@ -15,6 +15,16 @@ JAVA_FILE = os.path.join(PACKAGE_DIR, 'resources/MainActivity.java')
 CLIENT_FILE = os.path.join(PACKAGE_DIR, 'resources/MyWebViewClient.java')
 GRADLE_FILE = os.path.join(PACKAGE_DIR, 'resources/build.gradle')
 ICON_FILE = os.path.join(PACKAGE_DIR, 'resources/icon.png')
+HOME = os.path.expanduser("~")
+os.environ["JAVA_HOME"] = f'{HOME}/.py2apk/jdk'
+os.environ["ANDROID_HOME"] = f'{HOME}/.py2apk/android-sdk'
+pathlist = [
+    f'{HOME}/.py2apk/gradle/gradle-7.1.1/bin',
+    f'{HOME}/.py2apk/android-sdk/cmdline-tools/latest/bin',
+    f'{HOME}/.py2apk/android-sdk/emulator',
+    f'{HOME}/.py2apk/android-sdk/platform-tools'
+]
+os.environ["PATH"] += os.pathsep + os.pathsep.join(pathlist)
 
 class Py2Apk():
 
@@ -81,22 +91,17 @@ class Py2Apk():
             return self.download_data()        
 
     def install(self):
+        if os.path.exists(f'{HOME}/.py2apk'):
+            print('delete old files...')
+            shutil.rmtree(f'{HOME}/.py2apk')
         print('download jdk...')
-        if os.name == 'nt':
-            jdk_11 = jdk.install('11')
-            os.system(f"setx JAVA_HOME {jdk_11}")
-            os.system(f"set JAVA_HOME={jdk_11}")
-        else:
-            os.system(f"export JAVA_HOME={jdk_11}")
+        jdk_11 = jdk.install('11')
+        shutil.move(jdk_11, f'{HOME}/.py2apk/jdk')
+        shutil.rmtree(f'{HOME}/.jdk')
         print('jdk installed!')
         self.download_file('gradle.zip', 'https://services.gradle.org/distributions/gradle-7.1.1-bin.zip')
-        self.unzip('gradle.zip', f'{os.path.expanduser("~")}/.py2apk/gradle')
-        os.remove('gradle.zip')
-        if os.name == 'nt':
-            os.system(f'setx path "%PATH%;{os.path.expanduser("~")}\\.py2apk\\gradle\\gradle-7.1.1\\bin"')
-            os.system(f'set path="%PATH%;{os.path.expanduser("~")}\\.py2apk\\gradle\\gradle-7.1.1\\bin"')        
-        else:
-            os.system(f'export PATH=$PATH:{os.path.expanduser("~")}/.py2apk/gradle/gradle-7.1.1/bin')            
+        self.unzip('gradle.zip', f'{HOME}/.py2apk/gradle')
+        os.remove('gradle.zip')                    
         print('gradle installed!')
         if platform.system() == 'Windows':
             sdk = 'win'
@@ -105,35 +110,20 @@ class Py2Apk():
         if platform.system() == 'Linux':
             sdk = 'win'
         self.download_file('cmdline-tools.zip', f'https://dl.google.com/android/repository/commandlinetools-{sdk}-7583922_latest.zip')
-        self.unzip('cmdline-tools.zip', f'{os.path.expanduser("~")}/.py2apk/android-sdk/')
+        self.unzip('cmdline-tools.zip', f'{HOME}/.py2apk/android-sdk/')
         os.remove('cmdline-tools.zip')
-        shutil.move(f'{os.path.expanduser("~")}/.py2apk/android-sdk/cmdline-tools/bin', f'{os.path.expanduser("~")}/.py2apk/android-sdk/cmdline-tools/latest/bin')
-        shutil.move(f'{os.path.expanduser("~")}/.py2apk/android-sdk/cmdline-tools/lib', f'{os.path.expanduser("~")}/.py2apk/android-sdk/cmdline-tools/latest/lib')
-        shutil.move(f'{os.path.expanduser("~")}/.py2apk/android-sdk/cmdline-tools/NOTICE.txt', f'{os.path.expanduser("~")}/.py2apk/android-sdk/cmdline-tools/latest/NOTICE.txt')
-        shutil.move(f'{os.path.expanduser("~")}/.py2apk/android-sdk/cmdline-tools/source.properties', f'{os.path.expanduser("~")}/.py2apk/android-sdk/cmdline-tools/latest/source.properties')
-        if os.name == 'nt':
-            os.system(f'setx ANDROID_HOME {os.path.expanduser("~")}\\.py2apk\\android-sdk')
-            os.system(f'set ANDROID_HOME={os.path.expanduser("~")}\\.py2apk\\android-sdk')            
-            os.system(f'setx path "%PATH%;{os.path.expanduser("~")}\\.py2apk\\android-sdk\\cmdline-tools\\latest\\bin')
-            os.system(f'set path="%PATH%;{os.path.expanduser("~")}\\.py2apk\\android-sdk\\cmdline-tools\\latest\\bin')
-            os.system(f'setx path "%PATH%;{os.path.expanduser("~")}\\.py2apk\\android-sdk\\emulator')
-            os.system(f'set path="%PATH%;{os.path.expanduser("~")}\\.py2apk\\android-sdk\\emulator')
-            os.system(f'setx path "%PATH%;{os.path.expanduser("~")}\\.py2apk\\android-sdk\\platform-tools')
-            os.system(f'set path="%PATH%;{os.path.expanduser("~")}\\.py2apk\\android-sdk\\platform-tools')            
-        else:
-            os.system(f'export ANDROID_HOME={os.path.expanduser("~")}/.py2apk/android-sdk')
-            os.system(f'export PATH=$PATH:{os.path.expanduser("~")}/.py2apk/android-sdk/cmdline-tools/latest/bin')
-            os.system(f'export PATH=$PATH:{os.path.expanduser("~")}/.py2apk/android-sdk/emulator')
-            os.system(f'export PATH=$PATH:{os.path.expanduser("~")}/.py2apk/android-sdk/platform-tools')
-            os.system('exec bash')        
+        shutil.move(f'{HOME}/.py2apk/android-sdk/cmdline-tools', f'{HOME}/.py2apk/android-sdk/latest')
+        shutil.move(f'{HOME}/.py2apk/android-sdk/latest', f'{HOME}/.py2apk/android-sdk/cmdline-tools/latest')
         os.system('sdkmanager --licenses')
         os.system('sdkmanager --install "system-images;android-30;google_apis;x86_64"')
         os.system('avdmanager create avd -n py2apk_emu -k "system-images;android-30;google_apis;x86_64"')        
         print('android-sdk installed!')
+        if os.path.exists(f'{PACKAGE_DIR}/resources'):
+            shutil.rmtree(f'{PACKAGE_DIR}/resources')
         self.download_file('resources.zip', 'https://github.com/anbuhckr/py2apk/releases/download/v1.1.1/resources.zip')
         self.unzip('resources.zip', PACKAGE_DIR)
         os.remove('resources.zip')
-        print('resources installed!')                  
+        print('resources installed!')                 
 
     def new(self):
         data_toml = {'data': {
@@ -190,4 +180,3 @@ class Py2Apk():
 
     def package(self):
         print('still on progress, manual package your apk with gradle')
-        

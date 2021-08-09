@@ -169,14 +169,18 @@ class Py2Apk():
         os.system('gradle wrapper')
         os.system('gradlew assembleDebug')
 
-    def run(self):
+    def start(self):
         os.system('adb kill-server')
         os.system('adb start-server')
         if os.name == 'nt':
             os.system('start /MIN emulator @py2apk_emu')
         else:
             os.system('emulator @py2apk_emu &')
-        os.system('gradlew installDebug')
+
+    def run(self):
+        data_toml = toml.load('app.toml')
+        data = data_toml['data']
+        os.system('gradlew installDebug')        
 
     def package(self):
         print('still on progress, manual package your apk with gradle')

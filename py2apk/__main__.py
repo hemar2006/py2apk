@@ -1,3 +1,4 @@
+  
 #! /usr/bin/env python3
 
 import py2apk, sys
@@ -22,6 +23,9 @@ if __name__ == '__main__':
     elif sys.argv[1] == 'build':
         app = py2apk.Py2Apk()
         app.build()
+    elif sys.argv[1] == 'start':
+        app = py2apk.Py2Apk()
+        app.start()
     elif sys.argv[1] == 'run':
         app = py2apk.Py2Apk()
         app.run()

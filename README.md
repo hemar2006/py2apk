@@ -6,7 +6,7 @@
 [![GitHub license](https://img.shields.io/github/license/anbuhckr/py2apk)](./LICENSE)
 ![PyPI - Python Version](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8%20%7C%203.9-blue)
 
-Easly create standalone android app for web developer with python, html, css, js.
+Easly create standalone android app for web developer with python, html, css, js.\n
 Focus creating your web app with html, css, and js. Let this small python tools converting to apk.
 
 ## Table of Contents

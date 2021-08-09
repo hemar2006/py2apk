@@ -128,8 +128,7 @@ class Py2Apk():
             os.system('exec bash')        
         os.system('sdkmanager --licenses')
         os.system('sdkmanager --install "system-images;android-30;google_apis;x86_64"')
-        os.system('avdmanager create avd -n py2apk_emu -k "system-images;android-30;google_apis;x86_64"')
-        os.system('adb start-server')
+        os.system('avdmanager create avd -n py2apk_emu -k "system-images;android-30;google_apis;x86_64"')        
         print('android-sdk installed!')
         self.download_file('resources.zip', 'https://github.com/anbuhckr/py2apk/releases/download/v1.1.1/resources.zip')
         self.unzip('resources.zip', PACKAGE_DIR)
@@ -181,6 +180,8 @@ class Py2Apk():
         os.system('gradlew assembleDebug')
 
     def run(self):
+        os.system('adb kill-server')
+        os.system('adb start-server')
         if os.name == 'nt':
             os.system('start /MIN emulator @py2apk_emu')
         else:

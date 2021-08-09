@@ -85,7 +85,7 @@ class Py2Apk():
         if os.name == 'nt':
             jdk_11 = jdk.install('11')
             os.system(f"setx JAVA_HOME {jdk_11}")
-            os.system(f"set JAVA_HOME={jdk_11)}")
+            os.system(f"set JAVA_HOME={jdk_11}")
         else:
             os.system(f"export JAVA_HOME={jdk_11}")
         print('jdk installed!')

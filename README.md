@@ -53,7 +53,10 @@ $ python3 -m py2apk new
 #build app
 $ python3 -m py2apk build
 
-#run app
+#start emulator
+$ python3 -m py2apk start
+
+#install app in emulator
 $ python3 -m py2apk run
 
 #package app

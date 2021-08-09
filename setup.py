@@ -18,7 +18,10 @@ with open('py2apk/__init__.py', 'rb') as f:
 
 requirements = [    
     'toml>=0.10.2',
-    'Pillow>=8.2.0',    
+    'Pillow>=8.2.0',
+    'install-jdk>=0.3.0',
+    'requests>=2.25.1',
+    'tqdm>=4.61.0',    
 ]
 
 
@@ -29,7 +32,7 @@ setup(
     long_description=readme,
     author="anbuhckr",
     author_email='anbu.hckr@hotmail.com',
-    url='https://github.com/anbuhckr/py2apkp',
+    url='https://github.com/anbuhckr/py2apk',
     packages=find_packages(),
     package_dir={},    
     include_package_data=True,    
@@ -46,7 +49,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
-        'Topic :: Internet :: WWW/HTTP',
-        'Topic :: Internet :: WWW/HTTP :: IP'
+        'Topic :: Software Development',
+        'Topic :: Utilities',
     ],
 )

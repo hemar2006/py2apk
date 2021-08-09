@@ -3,12 +3,15 @@
 import py2apk, sys
 
 if __name__ == '__main__':
-    if sys.argv[1] == 'new':
+    if sys.argv[1] == 'install':
+        app = py2apk.Py2Apk()
+        app.install()
+    elif sys.argv[1] == 'new':
         app = py2apk.Py2Apk()
         app.new()
     elif sys.argv[1] == 'build':
         app = py2apk.Py2Apk()
-        app.buid()
+        app.build()
     elif sys.argv[1] == 'run':
         app = py2apk.Py2Apk()
         app.run()
@@ -18,4 +21,3 @@ if __name__ == '__main__':
     else:
         print('usage: py2apk.py [-h]')
     sys.exit()
-    

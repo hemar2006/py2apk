@@ -217,7 +217,7 @@ class Py2Apk():
         else:
             gdl = './gradlew')
         os.system(f'{gdl} assembleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
-        os.system(f'{'gdl') bundleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
+        os.system(f'{gdl} bundleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
 
     def verify(self):
         app_name = os.getcwd().split('\\')[-1]

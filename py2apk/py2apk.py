@@ -116,6 +116,10 @@ class Py2Apk():
         os.remove('cmdline-tools.zip')
         shutil.move(f'{HOME}/.py2apk/android-sdk/cmdline-tools', f'{HOME}/.py2apk/android-sdk/latest')
         shutil.move(f'{HOME}/.py2apk/android-sdk/latest', f'{HOME}/.py2apk/android-sdk/cmdline-tools/latest')
+        if os.name != 'nt':
+            os.system(f'chmod +x {home}/.py2apk/gradle/gradle-7.1.1/bin/gradle')
+            os.system(f'chmod +x {home}/.py2apk/android-sdk/cmdline-tools/latest/bin/sdkmanager')
+            os.system(f'chmod +x {home}/.py2apk/android-sdk/cmdline-tools/latest/bin/avdmanager')
         os.system('sdkmanager --licenses')
         os.system('sdkmanager --install "system-images;android-28;default;x86"')
         os.system('avdmanager --verbose create avd --name "py2apk_emu" --abi "x86" --package "system-images;android-28;default;x86" --device "pixel"')        
@@ -176,6 +180,8 @@ class Py2Apk():
         if os.name == 'nt':
             os.system('start /MIN emulator @py2apk_emu')
         else:
+            os.system(f'chmod +x {home}/.py2apk/android-sdk/emulator/emulator')
+            os.system(f'chmod +x {home}/.py2apk/android-sdk/platform-tools/adb')
             os.system('emulator @py2apk_emu &')
         print('Waiting for emulator to start...', flush=True, end='')
         stats = None

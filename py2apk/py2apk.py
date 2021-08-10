@@ -172,7 +172,7 @@ class Py2Apk():
         self.render(GRADLE_FILE, None, data)        
         self.icons(data['icon_file'])
         os.system('gradle wrapper')
-        if os.name == 'nt:
+        if os.name == 'nt':
             os.system('gradlew assembleDebug')
             os.system('gradlew bundleDebug')
         else:
@@ -215,7 +215,7 @@ class Py2Apk():
         if os.name == 'nt':
             gdl = 'gradle'
         else:
-            gdl = './gradlew')
+            gdl = './gradlew'
         os.system(f'{gdl} assembleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
         os.system(f'{gdl} bundleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
 

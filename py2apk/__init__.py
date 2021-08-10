@@ -4,4 +4,4 @@ from __future__ import unicode_literals
 
 from .py2apk import Py2Apk
 
-__version__ = '1.2.2'
+__version__ = '1.2.3'

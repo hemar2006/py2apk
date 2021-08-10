@@ -122,7 +122,7 @@ class Py2Apk():
         print('android-sdk installed!')
         if os.path.exists(f'{PACKAGE_DIR}/resources'):
             shutil.rmtree(f'{PACKAGE_DIR}/resources')
-        self.download_file('resources.zip', 'https://github.com/anbuhckr/py2apk/releases/download/v1.1.1/resources.zip')
+        self.download_file('resources.zip', 'https://github.com/anbuhckr/py2apk/releases/download/v1.2.0/resources.zip')
         self.unzip('resources.zip', PACKAGE_DIR)
         os.remove('resources.zip')
         print('resources installed!')                 

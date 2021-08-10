@@ -181,7 +181,7 @@ class Py2Apk():
         stats = None
         while not stats:
             adb = subprocess.check_output(['adb', 'devices']).decode().strip()
-            if 'emulator-5554' in adb and 'offline' not in adb:
+            if 'emulator' in adb and 'offline' not in adb:
                 stats = True
             print('.', flush=True, end='')
             time.sleep(1)

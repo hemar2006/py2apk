@@ -53,12 +53,12 @@ $ python3 -m py2apk new
 #build app
 $ python3 -m py2apk build
 
-#start emulator
-$ python3 -m py2apk start
-
-#install app in emulator
+#install debug app in emulator
 $ python3 -m py2apk run
 
 #package app
 $ python3 -m py2apk package
+
+#verify signed app
+$ python3 -m py2apk verify
 ```

@@ -63,16 +63,15 @@ class Py2Apk():
             'name': 'mipmap-xxxhdpi',
             'd': 192,
         }]
-        im = Image.open(data)
-        ext = data.split('.')[1]        
-        im.save(f'src/main/ic_launcher-web.{ext}')
+        im = Image.open(data)        
+        im.save(f'src/main/ic_launcher-web.png')
         for size in sizes:
             path = os.path.join('src', 'main', 'res', size['name'])
             if not os.path.exists(path):
                 os.makedirs(path)
             im = Image.open(data)
             im.thumbnail((size['d'], size['d']))
-            im.save(f'{path}/ic_launcher.{ext}')
+            im.save(f'{path}/ic_launcher.png')
 
     def unzip(self, source, destination):
         with zipfile.ZipFile(source, 'r') as zip_ref:
@@ -173,8 +172,13 @@ class Py2Apk():
         self.render(GRADLE_FILE, None, data)        
         self.icons(data['icon_file'])
         os.system('gradle wrapper')
-        os.system('gradlew assembleDebug')
-        os.system('gradlew bundleDebug')
+        if os.name == 'nt:
+            os.system('gradlew assembleDebug')
+            os.system('gradlew bundleDebug')
+        else:
+            os.system('chmod +x gradlew')
+            os.system('./gradlew assembleDebug')
+            os.system('./gradlew bundleDebug')
 
     def run(self):
         if os.name == 'nt':
@@ -208,8 +212,12 @@ class Py2Apk():
         key_name = data['package_name'].replace('.', '_')
         if not os.path.exists(f'{key_name}.jks'):
             os.system(f'keytool -genkey -v -keystore {key_name}.jks -keyalg RSA -keysize 2048 -validity 10000 -alias {key_name} -storepass {key_pass} -keypass {key_pass}')
-        os.system(f'gradlew assembleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
-        os.system(f'gradlew bundleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
+        if os.name == 'nt':
+            gdl = 'gradle'
+        else:
+            gdl = './gradlew')
+        os.system(f'{gdl} assembleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
+        os.system(f'{'gdl') bundleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
 
     def verify(self):
         app_name = os.getcwd().split('\\')[-1]

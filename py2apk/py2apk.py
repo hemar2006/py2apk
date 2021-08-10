@@ -1,9 +1,10 @@
 #! /usr/bin/env python3
 
-import os, toml, jdk, zipfile, requests, platform, shutil
+import os, toml, jdk, zipfile, requests, platform, shutil, subprocess, time
 from string import Template
 from PIL import Image
 from tqdm import tqdm
+from getpass import getpass
 
 PACKAGE_DIR = os.path.dirname(os.path.realpath(__file__))
 XML_FILE = os.path.join(PACKAGE_DIR, 'resources/AndroidManifest.xml')
@@ -19,6 +20,7 @@ HOME = os.path.expanduser("~")
 os.environ["JAVA_HOME"] = f'{HOME}/.py2apk/jdk'
 os.environ["ANDROID_HOME"] = f'{HOME}/.py2apk/android-sdk'
 pathlist = [
+    f'{HOME}/.py2apk/jdk/bin',
     f'{HOME}/.py2apk/gradle/gradle-7.1.1/bin',
     f'{HOME}/.py2apk/android-sdk/cmdline-tools/latest/bin',
     f'{HOME}/.py2apk/android-sdk/emulator',
@@ -115,8 +117,8 @@ class Py2Apk():
         shutil.move(f'{HOME}/.py2apk/android-sdk/cmdline-tools', f'{HOME}/.py2apk/android-sdk/latest')
         shutil.move(f'{HOME}/.py2apk/android-sdk/latest', f'{HOME}/.py2apk/android-sdk/cmdline-tools/latest')
         os.system('sdkmanager --licenses')
-        os.system('sdkmanager --install "system-images;android-30;google_apis;x86_64"')
-        os.system('avdmanager create avd -n py2apk_emu -k "system-images;android-30;google_apis;x86_64"')        
+        os.system('sdkmanager --install "system-images;android-28;default;x86"')
+        os.system('avdmanager --verbose create avd --name "py2apk_emu" --abi "x86" --package "system-images;android-28;default;x86" --device "pixel"')        
         print('android-sdk installed!')
         if os.path.exists(f'{PACKAGE_DIR}/resources'):
             shutil.rmtree(f'{PACKAGE_DIR}/resources')
@@ -168,19 +170,41 @@ class Py2Apk():
         self.icons(data['icon_file'])
         os.system('gradle wrapper')
         os.system('gradlew assembleDebug')
+        os.system('gradlew bundleDebug')
 
-    def start(self):
-        os.system('adb kill-server')
-        os.system('adb start-server')
+    def run(self):
         if os.name == 'nt':
             os.system('start /MIN emulator @py2apk_emu')
         else:
             os.system('emulator @py2apk_emu &')
-
-    def run(self):
+        print('Waiting for emulator to start...', flush=True, end='')
+        stats = None
+        while not stats:
+            adb = subprocess.check_output(['adb', 'devices']).decode().strip()
+            if 'emulator-5554' in adb and 'offline' not in adb:
+                stats = True
+            print('.', flush=True, end='')
+            time.sleep(1)
         data_toml = toml.load('app.toml')
         data = data_toml['data']
-        os.system('gradlew installDebug')        
+        package = data['package_name']
+        app_name = os.getcwd().split('\\')[-1]
+        os.system(f'adb uninstall {package}')
+        os.system(f'adb install "{os.getcwd()}/build/outputs/apk/debug/{app_name}-debug.apk"')
+        os.system(f'adb shell am start -n {package}/{package}.MainActivity')
 
-    def package(self):
-        print('still on progress, manual package your apk with gradle')
+    def package(self):        
+        data_toml = toml.load('app.toml')
+        data = data_toml['data']
+        data['version_code'] = data['version_name'].split('.')[0]        
+        self.render(GRADLE_FILE, None, data)
+        key_pass = getpass('Enter keystore password: ')
+        key_name = data['package_name'].replace('.', '_')
+        if not os.path.exists(f'{key_name}.jks'):
+            os.system(f'keytool -genkey -v -keystore {key_name}.jks -keyalg RSA -keysize 2048 -validity 10000 -alias {key_name} -storepass {key_pass} -keypass {key_pass}')
+        os.system(f'gradlew assembleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
+        os.system(f'gradlew bundleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
+
+    def verify(self):
+        app_name = os.getcwd().split('\\')[-1]
+        os.system(f'jarsigner -verify -verbose -certs "{os.getcwd()}/build/outputs/apk/release/{app_name}-release.apk"')

@@ -108,9 +108,9 @@ class Py2Apk():
         if platform.system() == 'Windows':
             sdk = 'win'
         if platform.system() == 'Darwin':
-            sdk = 'win'
+            sdk = 'mac'
         if platform.system() == 'Linux':
-            sdk = 'win'
+            sdk = 'linux'
         self.download_file('cmdline-tools.zip', f'https://dl.google.com/android/repository/commandlinetools-{sdk}-7583922_latest.zip')
         self.unzip('cmdline-tools.zip', f'{HOME}/.py2apk/android-sdk/')
         os.remove('cmdline-tools.zip')

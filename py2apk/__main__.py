@@ -23,15 +23,15 @@ if __name__ == '__main__':
     elif sys.argv[1] == 'build':
         app = py2apk.Py2Apk()
         app.build()
-    elif sys.argv[1] == 'start':
-        app = py2apk.Py2Apk()
-        app.start()
     elif sys.argv[1] == 'run':
         app = py2apk.Py2Apk()
         app.run()
     elif sys.argv[1] == 'package':
         app = py2apk.Py2Apk()
         app.package()
+    elif sys.argv[1] == 'verify':
+        app = py2apk.Py2Apk()
+        app.verify()
     elif sys.argv[1] == 'help':        
         print(HELP_TEXT)        
     else:

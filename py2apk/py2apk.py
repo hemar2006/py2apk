@@ -132,7 +132,6 @@ class Py2Apk():
             os.system(f'chmod +x {HOME}/.py2apk/android-sdk/cmdline-tools/latest/bin/avdmanager')
         os.system('sdkmanager --licenses')
         os.system('sdkmanager --install "system-images;android-28;default;x86"')
-        os.system('avdmanager --verbose create avd --name "py2apk_emu" --abi "x86" --package "system-images;android-28;default;x86" --device "pixel"')        
         print('android-sdk installed!')                         
 
     def new(self):
@@ -210,6 +209,9 @@ class Py2Apk():
             os.system('./gradlew bundleDebug')
 
     def run(self):
+        emu = subprocess.check_output(['adb', 'devices']).decode().strip()
+        if 'py2apk_emu' not in emu:
+            os.system('avdmanager --verbose create avd --name "py2apk_emu" --abi "x86" --package "system-images;android-28;default;x86" --device "pixel"')
         if os.name == 'nt':
             os.system('start /MIN emulator @py2apk_emu')
         else:

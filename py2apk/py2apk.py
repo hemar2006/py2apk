@@ -153,14 +153,14 @@ class Py2Apk():
         self.download_data(ICON_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/icon.png')
         self.download_data(LOGO_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/logo.png')
         data_toml = {'data': {
-            'app_name': input('App name: ') or 'py2apk',           
-            'package_name': input('Package name: ') or 'demo.py2apk.app',            
-            'version_name': input('Version: ') or '1.0.0',
-            'status_color': input('Status bar color: ') or '#202225',
-            'icon_file': input('Icon: ') or ICON_FILE,
-            'logo_file': input('Logo: ') or LOGO_FILE,
-            'bg_color': input('Background color: ') or '#000000',
-            'url_path': input('URL: ') or 'file:///android_asset/index.html',
+            'app_name': input('App name [py2apk]: ') or 'py2apk',           
+            'package_name': input('Package name [demo.py2apk.app]: ') or 'demo.py2apk.app',            
+            'version_name': input('Version [1.0.0]: ') or '1.0.0',
+            'status_color': input('Status bar color [#202225]: ') or '#202225',
+            'icon_file': input('Icon [icon.png]: ') or ICON_FILE,
+            'logo_file': input('Logo [logo.png]: ') or LOGO_FILE,
+            'bg_color': input('Background color [#000000]: ') or '#000000',
+            'url_path': input('URL [file:///android_asset/index.html]: ') or 'file:///android_asset/index.html',
         }}
         with open('app.toml', 'w') as f:
             toml.dump(data_toml, f)

@@ -12,7 +12,7 @@ public class MainActivity extends Activity {
     @Override
     @SuppressLint("SetJavaScriptEnabled")
     public void onCreate(Bundle savedInstanceState) {        
-        setTheme(R.style.mainAppTheme); // add splash screen
+        setTheme(R.style.AppTheme); // add splash screen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mWebView = findViewById(R.id.activity_main_webview);

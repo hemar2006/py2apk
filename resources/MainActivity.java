@@ -14,13 +14,13 @@ public class MainActivity extends Activity {
     @SuppressLint("SetJavaScriptEnabled")
     public void onCreate(Bundle savedInstanceState) {       
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.splashscreen);     
+        setContentView(R.layout.AppTheme);     
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run() {                
-                Intent mainIntent = new Intent(Splash.this,Menu.class);
-                Splash.this.startActivity(mainIntent);
-                Splash.this.finish();
+                Intent mainIntent = new Intent(MainActivity.this,Menu.class);
+                MainActivity.this.startActivity(mainIntent);
+                MainActivity.this.finish();
             }
         }, 3000);        
         mWebView = findViewById(R.id.activity_main_webview);

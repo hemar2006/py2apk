@@ -4,9 +4,9 @@
         <item name="android:statusBarColor">${status_color}</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
-    </style>
+    </style>    
     
-    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="SplashTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>
 

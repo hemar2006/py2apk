@@ -85,20 +85,21 @@ class Py2Apk():
     def download_file(self, name, url):
         response = requests.get(url, stream=True)
         total_size_in_bytes = int(response.headers.get('content-length', 0))
-        block_size = 1024
+        block_size = 1024                   
         progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True, desc=f'download {name}')
         with open(name, 'wb') as file:
-            if total_size_in_bytes <= block_size:
-                file.write(response.content)
-            else:
-                for data in response.iter_content(block_size):
-                    progress_bar.update(len(data))
-                    file.write(data)
+            for data in response.iter_content(block_size):
+                progress_bar.update(len(data))
+                file.write(data)
         progress_bar.close()
-        if total_size_in_bytes > block_size:
-            if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
-                os.remove(name)
-                return self.download_file(name, url)        
+        if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
+            os.remove(name)
+            return self.download_file(name, url)
+
+    def download_data(self, name, url):
+        response = requests.get(url)
+        with open(name, 'wb') as file:
+            file.write(response.content)        
 
     def install(self):
         if os.path.exists(f'{HOME}/.py2apk'):
@@ -135,29 +136,19 @@ class Py2Apk():
 
     def new(self):
         if os.path.exists(f'{PACKAGE_DIR}/resources'):
-            shutil.rmtree(f'{PACKAGE_DIR}/resources')       
-        self.download_file('AndroidManifest.xml', 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/AndroidManifest.xml')
-        shutil.move(f'AndroidManifest.xml', XML_FILE)
-        self.download_file('activity_main.xml', 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/activity_main.xml')
-        shutil.move('activity_main.xml', ACTIVITY_FILE)
-        self.download_file('strings.xml', 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/strings.xml')
-        shutil.move(f'strings.xml', STRING_FILE)
-        self.download_file('styles.xml', 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/styles.xml')
-        shutil.move(f'styles.xml', STYLE_FILE)
-        self.download_file('bg_splash.xml', 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/bg_splash.xml')
-        shutil.move(f'bg_splash.xml', BG_FILE)
-        self.download_file('index.html', 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/index.html')
-        shutil.move(f'index.html', HTML_FILE)
-        self.download_file('MainActivity', 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MainActivity.java')
-        shutil.move('MainActivity.java', JAVA_FILE)
-        self.download_file('MyWebViewClient.java', 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MyWebViewClient.java')
-        shutil.move('MyWebViewClient.java', CLIENT_FILE)
-        self.download_file('build.gradle', 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/build.gradle')
-        shutil.move('build.gradle', GRADLE_FILE)
-        self.download_file('icon.png', 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/icon.png')
-        shutil.move(f'icon.png', ICON_FILE)
-        self.download_file('logo.png', 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/logo.png')
-        shutil.move(f'logo.png', LOGO_FILE)
+            shutil.rmtree(f'{PACKAGE_DIR}/resources')
+        os.makedirs(f'{PACKAGE_DIR}/resources')
+        self.download_data(XML_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/AndroidManifest.xml')
+        self.download_data(ACTIVITY_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/activity_main.xml')
+        self.download_data(STRING_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/strings.xml')
+        self.download_data(STYLE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/styles.xml')
+        self.download_data(BG_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/bg_splash.xml')
+        self.download_data(HTML_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/index.html')
+        self.download_data(JAVA_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MainActivity.java')
+        self.download_data(CLIENT_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MyWebViewClient.java')
+        self.download_data(GRADLE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/build.gradle')
+        self.download_data(ICON_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/icon.png')
+        self.download_data(LOGO_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/logo.png')
         data_toml = {'data': {
             'app_name': input('App name: ') or 'py2apk',           
             'package_name': input('Package name: ') or 'demo.py2apk.app',            

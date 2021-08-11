@@ -15,11 +15,11 @@ public class MainActivity extends Activity {
     @SuppressLint("SetJavaScriptEnabled")
     public void onCreate(Bundle savedInstanceState) {       
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.AppTheme);     
+        setContentView(R.layout.activity_main);     
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run() {                
-                Intent mainIntent = new Intent(MainActivity.this,Menu.class);
+                Intent mainIntent = new Intent(MainActivity.this.Menu.class);
                 MainActivity.this.startActivity(mainIntent);
                 MainActivity.this.finish();
             }

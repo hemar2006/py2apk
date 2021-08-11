@@ -94,7 +94,7 @@ class Py2Apk():
         progress_bar.close()
         if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
             os.remove(name)
-            return self.download_data()        
+            return self.download_file()        
 
     def install(self):
         if os.path.exists(f'{HOME}/.py2apk'):

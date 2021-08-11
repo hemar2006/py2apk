@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.os.Handler;
 
 public class MainActivity extends Activity {
     private WebView mWebView;

@@ -1,10 +1,14 @@
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.DeviceDefault.Light">
-        <item name="android:windowBackground">@drawable/bg_splash</item>
+    <style name="AppTheme" parent="android:Theme.DeviceDefault.Light">        
         <item name="android:statusBarColor">${status_color}</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>
+    
+    <style name="splashScreenTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+    </style>    
+        
 
 </resources>

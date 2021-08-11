@@ -11,11 +11,13 @@ XML_FILE = os.path.join(PACKAGE_DIR, 'resources/AndroidManifest.xml')
 ACTIVITY_FILE = os.path.join(PACKAGE_DIR, 'resources/activity_main.xml')
 STRING_FILE = os.path.join(PACKAGE_DIR, 'resources/strings.xml')
 STYLE_FILE = os.path.join(PACKAGE_DIR, 'resources/styles.xml')
+BG_FILE = os.path.join(PACKAGE_DIR, 'resources/bg_splash.xml')
 HTML_FILE = os.path.join(PACKAGE_DIR, 'resources/index.html')
 JAVA_FILE = os.path.join(PACKAGE_DIR, 'resources/MainActivity.java')
 CLIENT_FILE = os.path.join(PACKAGE_DIR, 'resources/MyWebViewClient.java')
 GRADLE_FILE = os.path.join(PACKAGE_DIR, 'resources/build.gradle')
 ICON_FILE = os.path.join(PACKAGE_DIR, 'resources/icon.png')
+LOGO_FILE = os.path.join(PACKAGE_DIR, 'resources/logo.png')
 HOME = os.path.expanduser("~")
 os.environ["JAVA_HOME"] = f'{HOME}/.py2apk/jdk'
 os.environ["ANDROID_HOME"] = f'{HOME}/.py2apk/android-sdk'
@@ -46,7 +48,7 @@ class Py2Apk():
             with open(file_name, 'w') as destination_file:
                 destination_file.write(t)
 
-    def icons(self, data):        
+    def icons(self, data, logo):
         sizes = [{
             'name': 'mipmap-mdpi',
             'd': 48,
@@ -69,9 +71,12 @@ class Py2Apk():
             path = os.path.join('src', 'main', 'res', size['name'])
             if not os.path.exists(path):
                 os.makedirs(path)
-            im = Image.open(data)
+            im = Image.open(data)            
             im.thumbnail((size['d'], size['d']))
             im.save(f'{path}/ic_launcher.png')
+            im2 = Image.open(logo)
+            im2.thumbnail((size['d'], size['d']))
+            im2.save(f'{path}/ic_logo.png')            
 
     def unzip(self, source, destination):
         with zipfile.ZipFile(source, 'r') as zip_ref:
@@ -122,22 +127,31 @@ class Py2Apk():
         os.system('sdkmanager --licenses')
         os.system('sdkmanager --install "system-images;android-28;default;x86"')
         os.system('avdmanager --verbose create avd --name "py2apk_emu" --abi "x86" --package "system-images;android-28;default;x86" --device "pixel"')        
-        print('android-sdk installed!')
-        if os.path.exists(f'{PACKAGE_DIR}/resources'):
-            shutil.rmtree(f'{PACKAGE_DIR}/resources')
-        self.download_file('resources.zip', 'https://github.com/anbuhckr/py2apk/releases/download/v1.2.0/resources.zip')
-        self.unzip('resources.zip', PACKAGE_DIR)
-        os.remove('resources.zip')
-        print('resources installed!')                 
+        print('android-sdk installed!')                         
 
     def new(self):
+        if os.path.exists(f'{PACKAGE_DIR}/resources'):
+            shutil.rmtree(f'{PACKAGE_DIR}/resources')       
+        self.download_file(XML_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/AndroidManifest.xml')
+        self.download_file(ACTIVITY_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/activity_main.xml')
+        self.download_file(STRING_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/strings.xml')
+        self.download_file(STYLE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/styles.xml')
+        self.download_file(BG_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/bg_splash.xml')
+        self.download_file(HTML_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/index.html')
+        self.download_file(JAVA_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MainActivity.java')
+        self.download_file(CLIENT_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MyWebViewClient.java')
+        self.download_file(GRADLE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/build.gradle')
+        self.download_file(ICON_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/icon.png')
+        self.download_file(LOGO_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/logo.png')
         data_toml = {'data': {
-            'app_name': input('App name: '),            
-            'package_name': input('Package name: '),            
-            'version_name': input('Version: '),
+            'app_name': input('App name: ') or 'py2apk',           
+            'package_name': input('Package name: ') or 'demo.py2apk.app',            
+            'version_name': input('Version: ') or '1.0.0',
             'status_color': input('Status bar color: ') or '#202225',
-            'icon_file': input('Icon: ') or ICON_FILE,         
-            'url_path': input('URL: ') or 'file:///android_asset/index.html',         
+            'icon_file': input('Icon: ') or ICON_FILE,
+            'logo_file': input('Logo: ') or LOGO_FILE,
+            'bg_color': input('Background color: ') or '#000000',
+            'url_path': input('URL: ') or 'file:///android_asset/index.html',
         }}
         with open('app.toml', 'w') as f:
             toml.dump(data_toml, f)
@@ -146,6 +160,7 @@ class Py2Apk():
         self.render(ACTIVITY_FILE, 'src/main/res/layout/', data)
         self.render(STRING_FILE, 'src/main/res/values/', data)
         self.render(STYLE_FILE, 'src/main/res/values/', data)
+        self.render(BG_FILE, 'src/main/res/values/', data)
         dirs = data['package_name'].split('.')
         targetPath = os.path.join('src', 'main', 'java', *dirs)
         self.render(JAVA_FILE, f'{targetPath}/', data)
@@ -154,7 +169,7 @@ class Py2Apk():
         data['version_code'] = data['version_name'].split('.')[0]        
         self.render(GRADLE_FILE, None, data)        
         self.render(HTML_FILE, 'src/main/assets/', data)
-        self.icons(data['icon_file'])
+        self.icons(data['icon_file'], data['logo_file'])       
 
     def build(self):
         data_toml = toml.load('app.toml')
@@ -163,6 +178,7 @@ class Py2Apk():
         self.render(ACTIVITY_FILE, 'src/main/res/layout/', data)
         self.render(STRING_FILE, 'src/main/res/values/', data)
         self.render(STYLE_FILE, 'src/main/res/values/', data)
+        self.render(BG_FILE, 'src/main/res/values/', data)
         dirs = data['package_name'].split('.')
         targetPath = os.path.join('src', 'main', 'java', *dirs)
         self.render(JAVA_FILE, f'{targetPath}/', data)
@@ -170,7 +186,7 @@ class Py2Apk():
         self.render(CLIENT_FILE, f'{targetPath}/', data)
         data['version_code'] = data['version_name'].split('.')[0]        
         self.render(GRADLE_FILE, None, data)        
-        self.icons(data['icon_file'])
+        self.icons(data['icon_file'], data['logo_file'])
         os.system('gradle wrapper')
         if os.name == 'nt':
             os.system('gradlew assembleDebug')

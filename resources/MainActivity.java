@@ -14,8 +14,7 @@ public class MainActivity extends Activity {
     @Override
     @SuppressLint("SetJavaScriptEnabled")
     public void onCreate(Bundle savedInstanceState) {       
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        super.onCreate(savedInstanceState);        
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run() {

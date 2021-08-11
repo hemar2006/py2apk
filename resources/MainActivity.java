@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
                 Splash.this.startActivity(mainIntent);
                 Splash.this.finish();
             }
-        }, SPLASH_DISPLAY_LENGTH);        
+        }, 3000);        
         mWebView = findViewById(R.id.activity_main_webview);
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);

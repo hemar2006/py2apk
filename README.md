@@ -12,7 +12,6 @@ Focus creating your web app with html, css, and js. Let this small python tools 
 ## Table of Contents
 
 * [Installation](#installation)
-* [CLI](#CLI)
 * [Getting Started](#getting-started)
 
 
@@ -30,23 +29,15 @@ or from source:
 $ python3 setup.py install
 ```
 
-## CLI
-
-Download android-sdk, gradle, jdk, resources for first time:
-
-```
-$ python3 -m py2apk install
-```
-
-Usage:
-
-```
-$ python3 -m py2apk help
-```
-
 ## Getting Started
 
 ``` bash
+#download android-sdk, gradle, jdk for first time only
+$ python3 -m py2apk install
+
+#usage:
+$ python3 -m py2apk help
+
 #create new app
 $ python3 -m py2apk new
 

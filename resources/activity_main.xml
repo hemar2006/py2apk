@@ -2,6 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    
+    <ImageView
+        android:id="@+id/splashscreen"
+        android:background="@android:color/bg_color"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:src="@drawable/splash"
+        android:layout_gravity="center"/>
 
     <WebView
         android:id="@+id/activity_main_webview"

@@ -249,6 +249,6 @@ class Py2Apk():
         os.system(f'{gdl} bundleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
 
     def verify(self):
-        app_name = os.getcwd().split('\\')[-1]
+        app_name = os.path.basename(os.getcwd())
         os.system(f'jarsigner -verify -verbose -certs "{os.getcwd()}/build/outputs/apk/release/{app_name}-release.apk"')
         

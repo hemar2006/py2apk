@@ -4,11 +4,10 @@
     tools:context=".MainActivity">
     
     <ImageView
-        android:id="@+id/splashscreen"
-        android:background="@android:color/bg_color"
+        android:id="@+id/splashscreen"        
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:src="@drawable/splash"
+        android:src="@drawable/bg_splash"
         android:layout_gravity="center"/>
 
     <WebView

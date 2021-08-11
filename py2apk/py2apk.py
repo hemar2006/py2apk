@@ -75,8 +75,7 @@ class Py2Apk():
             im = Image.open(data)            
             im.thumbnail((size['d'], size['d']))
             im.save(f'{path}/ic_launcher.png')
-            im2 = Image.open(logo)
-            im2.thumbnail((size['d'], size['d']))
+            im2 = Image.open(logo)           
             im2.save(f'{path}/ic_logo.png')            
 
     def unzip(self, source, destination):

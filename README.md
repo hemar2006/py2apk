@@ -31,7 +31,7 @@ $ python3 setup.py install
 
 ## Getting Started
 
-``` bash
+```
 #download android-sdk, gradle, jdk for first time only
 $ python3 -m py2apk install
 

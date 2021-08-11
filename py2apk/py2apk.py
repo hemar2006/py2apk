@@ -209,7 +209,7 @@ class Py2Apk():
             os.system('./gradlew bundleDebug')
 
     def run(self):
-        emu = subprocess.check_output(['adb', 'devices']).decode().strip()
+        emu = subprocess.check_output(['emulator', '-list-avds']).decode().strip()
         if 'py2apk_emu' not in emu:
             os.system('avdmanager --verbose create avd --name "py2apk_emu" --abi "x86" --package "system-images;android-28;default;x86" --device "pixel"')
         if os.name == 'nt':

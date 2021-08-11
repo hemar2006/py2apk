@@ -6,7 +6,7 @@
         <item name="android:windowNoTitle">true</item>
     </style>    
     
-    <style name="SplashTheme" parent="android:Theme.AppCompat.NoActionBar">
+    <style name="SplashTheme" parent="android:Theme.DeviceDefault.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>
 

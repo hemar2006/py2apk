@@ -227,7 +227,7 @@ class Py2Apk():
         data_toml = toml.load('app.toml')
         data = data_toml['data']
         package = data['package_name']
-        app_name = os.getcwd().split('\\')[-1]
+        app_name = os.path.basename(os.getcwd())
         os.system(f'adb uninstall {package}')
         os.system(f'adb install "{os.getcwd()}/build/outputs/apk/debug/{app_name}-debug.apk"')
         os.system(f'adb shell am start -n {package}/{package}.SplashActivity')

@@ -69,15 +69,15 @@ class Py2Apk():
         }]
         im = Image.open(data)        
         im.save(f'src/main/ic_launcher-web.png')
+        im2 = Image.open(logo)           
+        im2.save('src/main/res/drawable/ic_logo.png') 
         for size in sizes:
             path = os.path.join('src', 'main', 'res', size['name'])
             if not os.path.exists(path):
                 os.makedirs(path)
             im = Image.open(data)            
             im.thumbnail((size['d'], size['d']))
-            im.save(f'{path}/ic_launcher.png')
-            im2 = Image.open(logo)           
-            im2.save(f'{path}/ic_logo.png')            
+            im.save(f'{path}/ic_launcher.png')                       
 
     def unzip(self, source, destination):
         with zipfile.ZipFile(source, 'r') as zip_ref:
@@ -147,8 +147,8 @@ class Py2Apk():
         self.download_data(COLOR_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/colors.xml')
         self.download_data(HTML_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/index.html')
         self.download_data(JAVA_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MainActivity.java')
-        self.download_data(SPLASH_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MainActivity.java')
-        self.download_data(CLIENT_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/SplashActivity.java')
+        self.download_data(SPLASH_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/SplashActivity.java')
+        self.download_data(CLIENT_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MyWebViewClient.java')
         self.download_data(GRADLE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/build.gradle')
         self.download_data(ICON_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/icon.png')
         self.download_data(LOGO_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/logo.png')
@@ -230,7 +230,7 @@ class Py2Apk():
         app_name = os.getcwd().split('\\')[-1]
         os.system(f'adb uninstall {package}')
         os.system(f'adb install "{os.getcwd()}/build/outputs/apk/debug/{app_name}-debug.apk"')
-        os.system(f'adb shell am start -n {package}/{package}.MainActivity')
+        os.system(f'adb shell am start -n {package}/{package}.SplashActivity')
 
     def package(self):        
         data_toml = toml.load('app.toml')
@@ -251,3 +251,4 @@ class Py2Apk():
     def verify(self):
         app_name = os.getcwd().split('\\')[-1]
         os.system(f'jarsigner -verify -verbose -certs "{os.getcwd()}/build/outputs/apk/release/{app_name}-release.apk"')
+        

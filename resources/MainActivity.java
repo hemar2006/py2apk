@@ -12,6 +12,7 @@ import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 public class MainActivity extends Activity {
+    private AdView mAdView;
     private WebView mWebView;
 
     @Override   

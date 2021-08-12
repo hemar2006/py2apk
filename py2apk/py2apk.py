@@ -152,7 +152,7 @@ class Py2Apk():
         data_toml = {'data': {
             'app_name': input('App name [py2apk]: ') or 'py2apk',
             'app_id': input('App name [APPLICATION_ID]: ') or 'APPLICATION_ID',
-            'app_pub': input('App name [3940256099942544/6300978111]: ') or '3940256099942544/6300978111',
+            'app_pub': input('App name [3940256099942544~3347511713]: ') or '3940256099942544~3347511713',
             'package_name': input('Package name [demo.py2apk.app]: ') or 'demo.py2apk.app',            
             'version_name': input('Version [1.0.0]: ') or '1.0.0',
             'status_color': input('Status bar color [#202225]: ') or '#202225',

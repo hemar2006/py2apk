@@ -7,7 +7,7 @@ from tqdm import tqdm
 from getpass import getpass
 
 PACKAGE_DIR = os.path.dirname(os.path.realpath(__file__))
-XML_FILE = os.path.join(PACKAGE_DIR, 'resources/AndroidManifest.xml')
+MANIFEST_FILE = os.path.join(PACKAGE_DIR, 'resources/AndroidManifest.xml')
 ACTIVITY_FILE = os.path.join(PACKAGE_DIR, 'resources/activity_main.xml')
 STRING_FILE = os.path.join(PACKAGE_DIR, 'resources/strings.xml')
 STYLE_FILE = os.path.join(PACKAGE_DIR, 'resources/styles.xml')
@@ -15,8 +15,6 @@ BG_FILE = os.path.join(PACKAGE_DIR, 'resources/bg_splash.xml')
 COLOR_FILE = os.path.join(PACKAGE_DIR, 'resources/colors.xml')
 HTML_FILE = os.path.join(PACKAGE_DIR, 'resources/index.html')
 JAVA_FILE = os.path.join(PACKAGE_DIR, 'resources/MainActivity.java')
-CLIENT_FILE = os.path.join(PACKAGE_DIR, 'resources/MyWebViewClient.java')
-SPLASH_FILE = os.path.join(PACKAGE_DIR, 'resources/SplashActivity.java')
 GRADLE_FILE = os.path.join(PACKAGE_DIR, 'resources/build.gradle')
 ICON_FILE = os.path.join(PACKAGE_DIR, 'resources/icon.png')
 LOGO_FILE = os.path.join(PACKAGE_DIR, 'resources/logo.png')
@@ -138,7 +136,7 @@ class Py2Apk():
         if os.path.exists(f'{PACKAGE_DIR}/resources'):
             shutil.rmtree(f'{PACKAGE_DIR}/resources')
         os.makedirs(f'{PACKAGE_DIR}/resources')
-        self.download_data(XML_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/AndroidManifest.xml')
+        self.download_data(MANIFEST_FILE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/AndroidManifest.xml')
         self.download_data(ACTIVITY_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/activity_main.xml')
         self.download_data(STRING_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/strings.xml')
         self.download_data(STYLE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/styles.xml')
@@ -146,8 +144,6 @@ class Py2Apk():
         self.download_data(COLOR_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/colors.xml')
         self.download_data(HTML_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/index.html')
         self.download_data(JAVA_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MainActivity.java')
-        self.download_data(SPLASH_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/SplashActivity.java')
-        self.download_data(CLIENT_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MyWebViewClient.java')
         self.download_data(GRADLE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/build.gradle')
         self.download_data(ICON_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/icon.png')
         self.download_data(LOGO_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/logo.png')
@@ -164,7 +160,7 @@ class Py2Apk():
         with open('app.toml', 'w') as f:
             toml.dump(data_toml, f)
         data = data_toml['data']        
-        self.render(XML_FILE, 'src/main/', data)
+        self.render(MANIFEST_FILE_FILE, 'src/main/', data)
         self.render(ACTIVITY_FILE, 'src/main/res/layout/', data)
         self.render(STRING_FILE, 'src/main/res/values/', data)
         self.render(STYLE_FILE, 'src/main/res/values/', data)
@@ -172,10 +168,7 @@ class Py2Apk():
         self.render(BG_FILE, 'src/main/res/drawable/', data)
         dirs = data['package_name'].split('.')
         targetPath = os.path.join('src', 'main', 'java', *dirs)
-        self.render(JAVA_FILE, f'{targetPath}/', data)
-        data['host_name'] = '.'.join(reversed(data['package_name'].split('.')))
-        self.render(CLIENT_FILE, f'{targetPath}/', data)
-        self.render(SPLASH_FILE, f'{targetPath}/', data)
+        self.render(JAVA_FILE, f'{targetPath}/', data)        
         data['version_code'] = data['version_name'].split('.')[0]        
         self.render(GRADLE_FILE, None, data)        
         self.render(HTML_FILE, 'src/main/assets/', data)
@@ -184,7 +177,7 @@ class Py2Apk():
     def build(self):
         data_toml = toml.load('app.toml')
         data = data_toml['data']        
-        self.render(XML_FILE, 'src/main/', data)
+        self.render(MANIFEST_FILE, 'src/main/', data)
         self.render(ACTIVITY_FILE, 'src/main/res/layout/', data)
         self.render(STRING_FILE, 'src/main/res/values/', data)
         self.render(STYLE_FILE, 'src/main/res/values/', data)
@@ -192,32 +185,26 @@ class Py2Apk():
         self.render(BG_FILE, 'src/main/res/drawable/', data)
         dirs = data['package_name'].split('.')
         targetPath = os.path.join('src', 'main', 'java', *dirs)
-        self.render(JAVA_FILE, f'{targetPath}/', data)
-        data['host_name'] = '.'.join(reversed(data['package_name'].split('.')))
-        self.render(CLIENT_FILE, f'{targetPath}/', data)
-        self.render(SPLASH_FILE, f'{targetPath}/', data)
+        self.render(JAVA_FILE, f'{targetPath}/', data)        
         data['version_code'] = data['version_name'].split('.')[0]        
         self.render(GRADLE_FILE, None, data)        
         self.icons(data['icon_file'], data['logo_file'])
         os.system('gradle wrapper')
         if os.name == 'nt':
-            os.system('gradlew assembleDebug')
-            os.system('gradlew bundleDebug')
+            os.system('gradlew assembleDebug')            
         else:
             os.system('chmod +x gradlew')
-            os.system('./gradlew assembleDebug')
-            os.system('./gradlew bundleDebug')
+            os.system('./gradlew assembleDebug')            
 
-    def run(self):
+    def run(self):              
+        if os.name != 'nt':
+            os.system(f'chmod +x {HOME}/.py2apk/android-sdk/emulator/emulator')
+            os.system(f'chmod +x {HOME}/.py2apk/android-sdk/platform-tools/adb')
+        subprocess.run(['adb', 'devices'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) 
         emu = subprocess.check_output(['emulator', '-list-avds']).decode().strip()
         if 'py2apk_emu' not in emu:
             os.system('avdmanager --verbose create avd --name "py2apk_emu" --abi "x86" --package "system-images;android-28;default;x86" --device "pixel"')
-        if os.name == 'nt':
-            os.system('start /MIN emulator @py2apk_emu')
-        else:
-            os.system(f'chmod +x {HOME}/.py2apk/android-sdk/emulator/emulator')
-            os.system(f'chmod +x {HOME}/.py2apk/android-sdk/platform-tools/adb')
-            os.system('emulator @py2apk_emu &')
+        subprocess.run(['emulator', '@py2apk_emu'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)       
         print('Waiting for emulator to start...', flush=True, end='')
         stats = None
         while not stats:
@@ -252,5 +239,4 @@ class Py2Apk():
 
     def verify(self):
         app_name = os.path.basename(os.getcwd())
-        os.system(f'jarsigner -verify -verbose -certs "{os.getcwd()}/build/outputs/apk/release/{app_name}-release.apk"')
-        
+        os.system(f'jarsigner -verify -verbose -certs "{os.getcwd()}/build/outputs/apk/release/{app_name}-release.apk"')        

@@ -136,7 +136,7 @@ class Py2Apk():
         if os.path.exists(f'{PACKAGE_DIR}/resources'):
             shutil.rmtree(f'{PACKAGE_DIR}/resources')
         os.makedirs(f'{PACKAGE_DIR}/resources')
-        self.download_data(MANIFEST_FILE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/AndroidManifest.xml')
+        self.download_data(MANIFEST_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/AndroidManifest.xml')
         self.download_data(ACTIVITY_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/activity_main.xml')
         self.download_data(STRING_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/strings.xml')
         self.download_data(STYLE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/styles.xml')
@@ -160,7 +160,7 @@ class Py2Apk():
         with open('app.toml', 'w') as f:
             toml.dump(data_toml, f)
         data = data_toml['data']        
-        self.render(MANIFEST_FILE_FILE, 'src/main/', data)
+        self.render(MANIFEST_FILE, 'src/main/', data)
         self.render(ACTIVITY_FILE, 'src/main/res/layout/', data)
         self.render(STRING_FILE, 'src/main/res/values/', data)
         self.render(STYLE_FILE, 'src/main/res/values/', data)

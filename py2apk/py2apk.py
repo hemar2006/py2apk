@@ -204,7 +204,7 @@ class Py2Apk():
         emu = subprocess.check_output(['emulator', '-list-avds']).decode().strip()
         if 'py2apk_emu' not in emu:
             os.system('avdmanager --verbose create avd --name "py2apk_emu" --abi "x86" --package "system-images;android-28;default;x86" --device "pixel"')
-        subprocess.run(['emulator', '@py2apk_emu'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)       
+        subprocess.Popen(['emulator', '@py2apk_emu'], start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)       
         print('Waiting for emulator to start...', flush=True, end='')
         stats = None
         while not stats:
@@ -219,7 +219,7 @@ class Py2Apk():
         app_name = os.path.basename(os.getcwd())
         os.system(f'adb uninstall {package}')
         os.system(f'adb install "{os.getcwd()}/build/outputs/apk/debug/{app_name}-debug.apk"')
-        os.system(f'adb shell am start -n {package}/{package}.SplashActivity')
+        os.system(f'adb shell am start -n {package}/{package}.MainActivity')
 
     def package(self):        
         data_toml = toml.load('app.toml')

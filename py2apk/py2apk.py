@@ -16,6 +16,7 @@ COLOR_FILE = os.path.join(PACKAGE_DIR, 'resources/colors.xml')
 HTML_FILE = os.path.join(PACKAGE_DIR, 'resources/index.html')
 JAVA_FILE = os.path.join(PACKAGE_DIR, 'resources/MainActivity.java')
 GRADLE_FILE = os.path.join(PACKAGE_DIR, 'resources/build.gradle')
+GP_FILE = os.path.join(PACKAGE_DIR, 'resources/gradle.properties')
 ICON_FILE = os.path.join(PACKAGE_DIR, 'resources/icon.png')
 LOGO_FILE = os.path.join(PACKAGE_DIR, 'resources/logo.png')
 HOME = os.path.expanduser("~")
@@ -145,6 +146,7 @@ class Py2Apk():
         self.download_data(HTML_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/index.html')
         self.download_data(JAVA_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MainActivity.java')
         self.download_data(GRADLE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/build.gradle')
+        self.download_data(GP_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/gradle.properties')
         self.download_data(ICON_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/icon.png')
         self.download_data(LOGO_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/logo.png')
         data_toml = {'data': {
@@ -172,7 +174,8 @@ class Py2Apk():
         targetPath = os.path.join('src', 'main', 'java', *dirs)
         self.render(JAVA_FILE, f'{targetPath}/', data)        
         data['version_code'] = data['version_name'].split('.')[0]        
-        self.render(GRADLE_FILE, None, data)        
+        self.render(GRADLE_FILE, None, data)
+        self.render(GP_FILE, None, data)
         self.render(HTML_FILE, 'src/main/assets/', data)
         self.icons(data['icon_file'], data['logo_file'])       
 
@@ -189,7 +192,8 @@ class Py2Apk():
         targetPath = os.path.join('src', 'main', 'java', *dirs)
         self.render(JAVA_FILE, f'{targetPath}/', data)        
         data['version_code'] = data['version_name'].split('.')[0]        
-        self.render(GRADLE_FILE, None, data)        
+        self.render(GRADLE_FILE, None, data)
+        self.render(GP_FILE, None, data)
         self.icons(data['icon_file'], data['logo_file'])
         os.system('gradle wrapper')
         if os.name == 'nt':

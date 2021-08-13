@@ -2,6 +2,7 @@ package ${package_name};
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -14,6 +15,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends Activity {
+    private String app_id = "${app_id}";
+    private String banner_pub = "$banner_pub";
+    private String interstitial_pub = "${interstitial_pub}";
     private AdView mAdView;
     private WebView mWebView;
 
@@ -21,16 +25,20 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
+        if(app_id != 'ca-app-pub-3940256099942544~3347511713') {
+            MobileAds.initialize(this, new OnInitializationCompleteListener() {
+                @Override
+                public void onInitializationComplete(InitializationStatus initializationStatus) {}
+            });
+            if(banner_pub != null && !banner_pub.trim().isEmpty()) {
+                mAdView = findViewById(R.id.adView);
+                AdRequest adRequest = new AdRequest.Builder().build();
+                mAdView.loadAd(adRequest);
             }
-        });
-        mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-        
+            if(interstitial_pub != null && !interstitial_pub.trim().isEmpty()) {
+                // load interstitial here later
+            }
+        }       
         mWebView = findViewById(R.id.activity_main_webview);
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -48,9 +56,17 @@ public class MainActivity extends Activity {
             }
             
             @Override
-            public void onPageFinished(WebView view, String url) {
-                findViewById(R.id.splashscreen).setVisibility(View.GONE);
-                findViewById(R.id.activity_main_webview).setVisibility(View.VISIBLE);
+            public void onPageFinished(WebView view, String url) {                
+                new Handler().postDelayed(new Runnable(){
+                    @Override
+                    public void run() {
+                        findViewById(R.id.splashscreen).setVisibility(View.GONE);
+                        if(banner_pub != null && !banner_pub.trim().isEmpty()) {
+                            findViewById(R.id.adView).setVisibility(View.VISIBLE);
+                        } 
+                        findViewById(R.id.activity_main_webview).setVisibility(View.VISIBLE);                 
+                    }
+                }, 1000);               
             }
         }); 
     }

@@ -15,9 +15,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends Activity {
-    private String app_id = "${app_id}";
-    private String banner_pub = "$banner_pub";
-    private String interstitial_pub = "${interstitial_pub}";
+    private String appId = "${app_id}";
+    private String bannerPub = "$banner_pub";
+    private String interstitialPub = "${interstitial_pub}";
     private AdView mAdView;
     private WebView mWebView;
 
@@ -25,17 +25,17 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if(app_id != 'ca-app-pub-3940256099942544~3347511713') {
+        if(appId != "ca-app-pub-3940256099942544~3347511713") {
             MobileAds.initialize(this, new OnInitializationCompleteListener() {
                 @Override
                 public void onInitializationComplete(InitializationStatus initializationStatus) {}
             });
-            if(banner_pub != null && !banner_pub.trim().isEmpty()) {
+            if(bannerPub != null && !bannerPub.trim().isEmpty()) {
                 mAdView = findViewById(R.id.adView);
                 AdRequest adRequest = new AdRequest.Builder().build();
                 mAdView.loadAd(adRequest);
             }
-            if(interstitial_pub != null && !interstitial_pub.trim().isEmpty()) {
+            if(interstitialPub != null && !interstitialPub.trim().isEmpty()) {
                 // load interstitial here later
             }
         }       
@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void run() {
                         findViewById(R.id.splashscreen).setVisibility(View.GONE);
-                        if(banner_pub != null && !banner_pub.trim().isEmpty()) {
+                        if(bannerPub != null && !bannerPub.trim().isEmpty()) {
                             findViewById(R.id.adView).setVisibility(View.VISIBLE);
                         } 
                         findViewById(R.id.activity_main_webview).setVisibility(View.VISIBLE);                 

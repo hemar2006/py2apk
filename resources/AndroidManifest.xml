@@ -15,7 +15,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="${app_id}"/>        
+            android:value="${manifest_id}"/>      
         <activity
             android:configChanges="orientation|screenSize"
             android:name="${package_name}.MainActivity"

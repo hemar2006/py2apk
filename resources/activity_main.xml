@@ -28,6 +28,6 @@
         android:layout_alignParentBottom="true"
         android:visibility="gone"
         ads:adSize="BANNER"
-        ads:adUnitId="${app_pub}"/>        
+        ads:adUnitId="${banner_pub}"/>        
 
 </RelativeLayout>

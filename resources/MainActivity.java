@@ -107,7 +107,7 @@ public class MainActivity extends Activity {
                         public void run() {                        
                             mInterstitialAd.show(MainActivity.this);                                                             
                         }
-                    }, 10000);
+                    }, ${interstitial_time}000);
                 }                            
             }
         });        

@@ -171,8 +171,8 @@ class Py2Apk():
             'package_name': package_name,            
             'version_name': version_name,
             'status_color': status_color,
-            'self.icon_file': self.icon_file,
-            'self.logo_file': self.logo_file,
+            'icon_file': self.icon_file,
+            'logo_file': self.logo_file,
             'bg_color': bg_color,
             'url_path': url_path,
             'app_id': app_id,
@@ -210,7 +210,7 @@ class Py2Apk():
         self.render(self.gradle_file, None, data)
         self.render(self.gp_file, None, data)
         self.render(self.html_file, os.path.join('src', 'main', 'assets'), data)
-        self.icons(data['self.icon_file'], data['self.logo_file'])  
+        self.icons(data['icon_file'], data['logo_file'])  
 
     def build(self):
         data_toml = toml.load('app.toml')
@@ -227,7 +227,7 @@ class Py2Apk():
         data['version_code'] = data['version_name'].split('.')[0]        
         self.render(self.gradle_file, None, data)
         self.render(self.gp_file, None, data)
-        self.icons(data['self.icon_file'], data['self.logo_file'])
+        self.icons(data['icon_file'], data['logo_file'])
         os.system('gradle wrapper')
         if os.name != 'nt':
             os.system(f'chmod +x {self.gradlew}')

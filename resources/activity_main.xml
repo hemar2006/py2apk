@@ -7,12 +7,12 @@
     tools:context="${package_name}.MainActivity">
 	
     <ImageView
-	android:id="@+id/splashscreen"
-	android:layout_width="wrap_content"
-	android:layout_height="fill_parent"
-	android:visibility="visible"
-	android:src="@drawable/bg_splash"
-	android:layout_gravity="center"/>
+        android:id="@+id/splashscreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        android:src="@drawable/bg_splash"
+        android:layout_gravity="center"/>
 
     <WebView
         android:id="@+id/activity_main_webview"
@@ -21,13 +21,13 @@
         android:visibility="gone"/>
 	
     <com.google.android.gms.ads.AdView
-	android:id="@+id/adView"
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
-	android:layout_centerHorizontal="true"
-	android:layout_alignParentBottom="true"
-	android:visibility="gone"
-	ads:adSize="BANNER"
-	ads:adUnitId="${app_pub}"/>
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        ads:adSize="BANNER"
+        ads:adUnitId="${app_pub}"/>        
 
 </RelativeLayout>

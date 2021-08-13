@@ -195,38 +195,32 @@ class Py2Apk():
         self.resource_download()              
         data_toml = self.save_setting()
         data = data_toml['data']
-        if not data['app_id']:
-            data['app_id'] = 'ca-app-pub-3940256099942544~3347511713'        
+        data['manifest_id'] = data['app_id'] or 'ca-app-pub-3940256099942544~3347511713'        
         self.render(self.manifest_file, os.path.join('src', 'main'), data)
         self.render(self.activity_file, os.path.join('src', 'main', 'res', 'layout'), data)
         self.render(self.string_file, os.path.join('src', 'main', 'res', 'values'), data)
         self.render(self.style_file, os.path.join('src', 'main', 'res', 'values'), data)
         self.render(self.color_file, os.path.join('src', 'main', 'res', 'values'), data)
         self.render(self.bg_file, os.path.join('src', 'main', 'res', 'drawable'), data)
-        dirs = data['package_name'].split('.')
-        if data['app_id'] == 'ca-app-pub-3940256099942544~3347511713':
-            data['app_id'] = ''
+        dirs = data['package_name'].split('.')       
         self.render(self.java_file, os.path.join('src', 'main', 'java', *dirs), data)     
         data['version_code'] = data['version_name'].split('.')[0]        
         self.render(self.gradle_file, None, data)
         self.render(self.gp_file, None, data)
         self.render(self.html_file, os.path.join('src', 'main', 'assets'), data)
-        self.icons(data['self.icon_file'], data['self.logo_file'])    
+        self.icons(data['self.icon_file'], data['self.logo_file'])  
 
     def build(self):
         data_toml = toml.load('app.toml')
         data = data_toml['data']
-        if not data['app_id']:
-            data['app_id'] = 'ca-app-pub-3940256099942544~3347511713'        
+        data['manifest_id'] = data['app_id'] or 'ca-app-pub-3940256099942544~3347511713'      
         self.render(self.manifest_file, os.path.join('src', 'main'), data)
         self.render(self.activity_file, os.path.join('src', 'main', 'res', 'layout'), data)
         self.render(self.string_file, os.path.join('src', 'main', 'res', 'values'), data)
         self.render(self.style_file, os.path.join('src', 'main', 'res', 'values'), data)
         self.render(self.color_file, os.path.join('src', 'main', 'res', 'values'), data)
         self.render(self.bg_file, os.path.join('src', 'main', 'res', 'drawable'), data)
-        dirs = data['package_name'].split('.')
-        if data['app_id'] == 'ca-app-pub-3940256099942544~3347511713':
-            data['app_id'] = ''
+        dirs = data['package_name'].split('.')        
         self.render(self.java_file, os.path.join('src', 'main', 'java', *dirs), data)       
         data['version_code'] = data['version_name'].split('.')[0]        
         self.render(self.gradle_file, None, data)

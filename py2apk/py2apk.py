@@ -6,35 +6,36 @@ from PIL import Image
 from tqdm import tqdm
 from getpass import getpass
 
-PACKAGE_DIR = os.path.dirname(os.path.realpath(__file__))
-MANIFEST_FILE = os.path.join(PACKAGE_DIR, 'resources', 'AndroidManifest.xml')
-ACTIVITY_FILE = os.path.join(PACKAGE_DIR, 'resources', 'activity_main.xml')
-STRING_FILE = os.path.join(PACKAGE_DIR, 'resources', 'strings.xml')
-STYLE_FILE = os.path.join(PACKAGE_DIR, 'resources', 'styles.xml')
-BG_FILE = os.path.join(PACKAGE_DIR, 'resources', 'bg_splash.xml')
-COLOR_FILE = os.path.join(PACKAGE_DIR, 'resources', 'colors.xml')
-HTML_FILE = os.path.join(PACKAGE_DIR, 'resources', 'index.html')
-JAVA_FILE = os.path.join(PACKAGE_DIR, 'resources', 'MainActivity.java')
-GRADLE_FILE = os.path.join(PACKAGE_DIR, 'resources', 'build.gradle')
-GP_FILE = os.path.join(PACKAGE_DIR, 'resources', 'gradle.properties')
-ICON_FILE = os.path.join(PACKAGE_DIR, 'resources', 'icon.png')
-LOGO_FILE = os.path.join(PACKAGE_DIR, 'resources', 'logo.png')
-HOME = os.path.expanduser("~")
-os.environ["JAVA_HOME"] = os.path.join(HOME, '.py2apk', 'jdk')
-os.environ["ANDROID_HOME"] = os.path.join(HOME, '.py2apk', 'android-sdk')
-pathlist = [
-    os.path.join(HOME, '.py2apk', 'jdk', 'bin'),
-    os.path.join(HOME, '.py2apk', 'gradle', 'gradle-7.1.1', 'bin'),
-    os.path.join(HOME, '.py2apk', 'android-sdk', 'cmdline-tools', 'latest', 'bin'),
-    os.path.join(HOME, '.py2apk', 'android-sdk', 'emulator'),
-    os.path.join(HOME, '.py2apk', 'android-sdk', 'platform-tools')
-]
-os.environ["PATH"] += os.pathsep + os.pathsep.join(pathlist)
-
 class Py2Apk():
 
     def __init__(self) -> None:
-        pass
+        self.package_dir = os.path.dirname(os.path.realpath(__file__))
+        self.manifest_file = os.path.join(self.package_dir, 'resources', 'AndroidManifest.xml')
+        self.activity_file = os.path.join(self.package_dir, 'resources', 'activity_main.xml')
+        self.string_file = os.path.join(self.package_dir, 'resources', 'strings.xml')
+        self.style_file = os.path.join(self.package_dir, 'resources', 'styles.xml')
+        self.bg_file = os.path.join(self.package_dir, 'resources', 'bg_splash.xml')
+        self.color_file = os.path.join(self.package_dir, 'resources', 'colors.xml')
+        self.html_file = os.path.join(self.package_dir, 'resources', 'index.html')
+        self.java_file = os.path.join(self.package_dir, 'resources', 'MainActivity.java')
+        self.gradle_file = os.path.join(self.package_dir, 'resources', 'build.gradle')
+        self.gp_file = os.path.join(self.package_dir, 'resources', 'gradle.properties')
+        self.icon_file = os.path.join(self.package_dir, 'resources', 'icon.png')
+        self.logo_file = os.path.join(self.package_dir, 'resources', 'logo.png')
+        self.home = os.path.expanduser("~")
+        self.gradlew = 'gradlew'
+        if os.name != 'nt':
+            self.gradlew = './gradlew'
+        os.environ["JAVA_HOME"] = os.path.join(self.home, '.py2apk', 'jdk')
+        os.environ["ANDROID_HOME"] = os.path.join(self.home, '.py2apk', 'android-sdk')
+        pathlist = [
+            os.path.join(self.home, '.py2apk', 'jdk', 'bin'),
+            os.path.join(self.home, '.py2apk', 'gradle', 'gradle-7.1.1', 'bin'),
+            os.path.join(self.home, '.py2apk', 'android-sdk', 'cmdline-tools', 'latest', 'bin'),
+            os.path.join(self.home, '.py2apk', 'android-sdk', 'emulator'),
+            os.path.join(self.home, '.py2apk', 'android-sdk', 'platform-tools')
+        ]
+        os.environ["PATH"] += os.pathsep + os.pathsep.join(pathlist)
 
     def render(self, source, destination, data):
         file_name = os.path.basename(source)
@@ -99,21 +100,24 @@ class Py2Apk():
     def download_data(self, name, url):
         response = requests.get(url)
         with open(name, 'wb') as file:
-            file.write(response.content)        
+            file.write(response.content)
 
-    def install(self):
-        if os.path.exists(os.path.join(HOME, '.py2apk')):
-            print('delete old files...')
-            shutil.rmtree(os.path.join(HOME, '.py2apk'))
+    def jdk_download(self):
         print('download jdk...')
         jdk_11 = jdk.install('11')
-        shutil.move(jdk_11, os.path.join(HOME, '.py2apk', 'jdk'))
-        shutil.rmtree(os.path.join(HOME, '.jdk'))
+        shutil.move(jdk_11, os.path.join(self.home, '.py2apk', 'jdk'))
+        shutil.rmtree(os.path.join(self.home, '.jdk'))
         print('jdk installed!')
+
+    def gradle_download(self):
         self.download_file('gradle.zip', 'https://services.gradle.org/distributions/gradle-7.1.1-bin.zip')
-        self.unzip('gradle.zip', os.path.join(HOME, '.py2apk', 'gradle'))
-        os.remove('gradle.zip')                    
+        self.unzip('gradle.zip', os.path.join(self.home, '.py2apk', 'gradle'))
+        os.remove('gradle.zip')
+        if os.name != 'nt':
+            os.system(f"chmod +x {os.path.join(self.home, '.py2apk', 'gradle', 'gradle-7.1.1', 'bin', 'gradle')}")                   
         print('gradle installed!')
+
+    def sdk_download(self):
         if platform.system() == 'Windows':
             sdk = 'win'
         if platform.system() == 'Darwin':
@@ -121,89 +125,122 @@ class Py2Apk():
         if platform.system() == 'Linux':
             sdk = 'linux'
         self.download_file('cmdline-tools.zip', f'https://dl.google.com/android/repository/commandlinetools-{sdk}-7583922_latest.zip')
-        self.unzip('cmdline-tools.zip', os.path.join(HOME, '.py2apk', 'android-sdk'))
+        self.unzip('cmdline-tools.zip', os.path.join(self.home, '.py2apk', 'android-sdk'))
         os.remove('cmdline-tools.zip')
-        shutil.move(os.path.join(HOME, '.py2apk', 'android-sdk', 'cmdline-tools'), os.path.join(HOME, '.py2apk', 'android-sdk', 'latest'))
-        shutil.move(os.path.join(HOME, '.py2apk', 'android-sdk', 'latest'), os.path.join(HOME, '.py2apk', 'android-sdk', 'cmdline-tools', 'latest'))
-        if os.name != 'nt':
-            os.system(f"chmod +x {os.path.join(HOME, '.py2apk', 'gradle', 'gradle-7.1.1', 'bin', 'gradle')}")
-            os.system(f"chmod +x {os.path.join(HOME, '.py2apk', 'android-sdk', 'cmdline-tools', 'latest', 'bin', 'sdkmanager')}")
-            os.system(f"chmod +x {os.path.join(HOME, '.py2apk', 'android-sdk', 'cmdline-tools', 'latest', 'bin', 'avdmanager')}")
+        shutil.move(os.path.join(self.home, '.py2apk', 'android-sdk', 'cmdline-tools'), os.path.join(self.home, '.py2apk', 'android-sdk', 'latest'))
+        shutil.move(os.path.join(self.home, '.py2apk', 'android-sdk', 'latest'), os.path.join(self.home, '.py2apk', 'android-sdk', 'cmdline-tools', 'latest'))
+        if os.name != 'nt':            
+            os.system(f"chmod +x {os.path.join(self.home, '.py2apk', 'android-sdk', 'cmdline-tools', 'latest', 'bin', 'sdkmanager')}")
+            os.system(f"chmod +x {os.path.join(self.home, '.py2apk', 'android-sdk', 'cmdline-tools', 'latest', 'bin', 'avdmanager')}")
         os.system('sdkmanager --licenses')
         os.system('sdkmanager --install "system-images;android-28;default;x86"')
-        print('android-sdk installed!')                         
+        print('android-sdk installed!')
 
-    def new(self):
-        if os.path.exists(os.path.join(PACKAGE_DIR, 'resources')):
-            shutil.rmtree(os.path.join(PACKAGE_DIR, 'resources'))
-        os.makedirs(os.path.join(PACKAGE_DIR, 'resources'))
-        self.download_data(MANIFEST_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/AndroidManifest.xml')
-        self.download_data(ACTIVITY_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/activity_main.xml')
-        self.download_data(STRING_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/strings.xml')
-        self.download_data(STYLE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/styles.xml')
-        self.download_data(BG_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/bg_splash.xml')
-        self.download_data(COLOR_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/colors.xml')
-        self.download_data(HTML_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/index.html')
-        self.download_data(JAVA_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MainActivity.java')
-        self.download_data(GRADLE_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/build.gradle')
-        self.download_data(GP_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/gradle.properties')
-        self.download_data(ICON_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/icon.png')
-        self.download_data(LOGO_FILE, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/logo.png')
+    def resource_download(self):
+        if os.path.exists(os.path.join(self.package_dir, 'resources')):
+            shutil.rmtree(os.path.join(self.package_dir, 'resources'))
+        os.makedirs(os.path.join(self.package_dir, 'resources'))
+        self.download_data(self.manifest_file, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/AndroidManifest.xml')
+        self.download_data(self.activity_file, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/activity_main.xml')
+        self.download_data(self.string_file, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/strings.xml')
+        self.download_data(self.style_file, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/styles.xml')
+        self.download_data(self.bg_file, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/bg_splash.xml')
+        self.download_data(self.color_file, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/colors.xml')
+        self.download_data(self.html_file, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/index.html')
+        self.download_data(self.java_file, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/MainActivity.java')
+        self.download_data(self.gradle_file, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/build.gradle')
+        self.download_data(self.gp_file, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/gradle.properties')
+        self.download_data(self.icon_file, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/icon.png')
+        self.download_data(self.logo_file, 'https://raw.githubusercontent.com/anbuhckr/py2apk/main/resources/logo.png')
+
+    def save_setting(self):
+        app_name = input('App name [py2apk]: ') or 'py2apk'              
+        package_name = input('Package name [demo.py2apk.app]: ') or 'demo.py2apk.app'            
+        version_name = input('Version [1.0.0]: ') or '1.0.0'
+        status_color = input('Status bar color [#202225]: ') or '#202225'
+        self.icon_file = input('Icon [icon.png]: ') or self.icon_file
+        self.logo_file = input('Logo [logo.png]: ') or self.logo_file
+        bg_color = input('Background color [#000000]: ') or '#000000'
+        url_path = input('URL [file:///android_asset/index.html]: ') or 'file:///android_asset/index.html'
+        app_id = input('Admob App-Id []: ') or ''  
+        banner_pub = input('Admob Banner []: ') or ''          
+        interstitial_pub = input('Admob Interstitial []: ') or ''
         data_toml = {'data': {
-            'app_name': input('App name [py2apk]: ') or 'py2apk',
-            'app_id': input('Admob ID [3940256099942544~3347511713D]: ') or '3940256099942544~3347511713',
-            'app_pub': input('Admob PUB [3940256099942544/6300978111]: ') or '3940256099942544/6300978111',
-            'package_name': input('Package name [demo.py2apk.app]: ') or 'demo.py2apk.app',            
-            'version_name': input('Version [1.0.0]: ') or '1.0.0',
-            'status_color': input('Status bar color [#202225]: ') or '#202225',
-            'icon_file': input('Icon [icon.png]: ') or ICON_FILE,
-            'logo_file': input('Logo [logo.png]: ') or LOGO_FILE,
-            'bg_color': input('Background color [#000000]: ') or '#000000',
-            'url_path': input('URL [file:///android_asset/index.html]: ') or 'file:///android_asset/index.html',
+            'app_name': app_name,            
+            'package_name': package_name,            
+            'version_name': version_name,
+            'status_color': status_color,
+            'self.icon_file': self.icon_file,
+            'self.logo_file': self.logo_file,
+            'bg_color': bg_color,
+            'url_path': url_path,
+            'app_id': app_id,
+            'banner_pub': banner_pub,
+            'interstitial_pub': interstitial_pub
         }}
         with open('app.toml', 'w') as f:
             toml.dump(data_toml, f)
-        data = data_toml['data']        
-        self.render(MANIFEST_FILE, os.path.join('src', 'main'), data)
-        self.render(ACTIVITY_FILE, os.path.join('src', 'main', 'res', 'layout'), data)
-        self.render(STRING_FILE, os.path.join('src', 'main', 'res', 'values'), data)
-        self.render(STYLE_FILE, os.path.join('src', 'main', 'res', 'values'), data)
-        self.render(COLOR_FILE, os.path.join('src', 'main', 'res', 'values'), data)
-        self.render(BG_FILE, os.path.join('src', 'main', 'res', 'drawable'), data)
-        dirs = data['package_name'].split('.')        
-        self.render(JAVA_FILE, os.path.join('src', 'main', 'java', *dirs), data)     
+        print("Saved to app.toml")
+        return data_toml
+
+    def install(self):
+        if os.path.exists(os.path.join(self.home, '.py2apk')):
+            print('delete old files...')
+            shutil.rmtree(os.path.join(self.home, '.py2apk'))
+        self.jdk_download()
+        self.gradle_download()
+        self.sdk_download()                                 
+
+    def new(self):
+        self.resource_download()              
+        data_toml = self.save_setting()
+        data = data_toml['data']
+        if not data['app_id']:
+            data['app_id'] = 'ca-app-pub-3940256099942544~3347511713'        
+        self.render(self.manifest_file, os.path.join('src', 'main'), data)
+        self.render(self.activity_file, os.path.join('src', 'main', 'res', 'layout'), data)
+        self.render(self.string_file, os.path.join('src', 'main', 'res', 'values'), data)
+        self.render(self.style_file, os.path.join('src', 'main', 'res', 'values'), data)
+        self.render(self.color_file, os.path.join('src', 'main', 'res', 'values'), data)
+        self.render(self.bg_file, os.path.join('src', 'main', 'res', 'drawable'), data)
+        dirs = data['package_name'].split('.')
+        if data['app_id'] == 'ca-app-pub-3940256099942544~3347511713':
+            data['app_id'] = ''
+        self.render(self.java_file, os.path.join('src', 'main', 'java', *dirs), data)     
         data['version_code'] = data['version_name'].split('.')[0]        
-        self.render(GRADLE_FILE, None, data)
-        self.render(GP_FILE, None, data)
-        self.render(HTML_FILE, os.path.join('src', 'main', 'assets'), data)
-        self.icons(data['icon_file'], data['logo_file'])       
+        self.render(self.gradle_file, None, data)
+        self.render(self.gp_file, None, data)
+        self.render(self.html_file, os.path.join('src', 'main', 'assets'), data)
+        self.icons(data['self.icon_file'], data['self.logo_file'])    
 
     def build(self):
         data_toml = toml.load('app.toml')
-        data = data_toml['data']        
-        self.render(MANIFEST_FILE, os.path.join('src', 'main'), data)
-        self.render(ACTIVITY_FILE, os.path.join('src', 'main', 'res', 'layout'), data)
-        self.render(STRING_FILE, os.path.join('src', 'main', 'res', 'values'), data)
-        self.render(STYLE_FILE, os.path.join('src', 'main', 'res', 'values'), data)
-        self.render(COLOR_FILE, os.path.join('src', 'main', 'res', 'values'), data)
-        self.render(BG_FILE, os.path.join('src', 'main', 'res', 'drawable'), data)
+        data = data_toml['data']
+        if not data['app_id']:
+            data['app_id'] = 'ca-app-pub-3940256099942544~3347511713'        
+        self.render(self.manifest_file, os.path.join('src', 'main'), data)
+        self.render(self.activity_file, os.path.join('src', 'main', 'res', 'layout'), data)
+        self.render(self.string_file, os.path.join('src', 'main', 'res', 'values'), data)
+        self.render(self.style_file, os.path.join('src', 'main', 'res', 'values'), data)
+        self.render(self.color_file, os.path.join('src', 'main', 'res', 'values'), data)
+        self.render(self.bg_file, os.path.join('src', 'main', 'res', 'drawable'), data)
         dirs = data['package_name'].split('.')
-        self.render(JAVA_FILE, os.path.join('src', 'main', 'java', *dirs), data)       
+        if data['app_id'] == 'ca-app-pub-3940256099942544~3347511713':
+            data['app_id'] = ''
+        self.render(self.java_file, os.path.join('src', 'main', 'java', *dirs), data)       
         data['version_code'] = data['version_name'].split('.')[0]        
-        self.render(GRADLE_FILE, None, data)
-        self.render(GP_FILE, None, data)
-        self.icons(data['icon_file'], data['logo_file'])
+        self.render(self.gradle_file, None, data)
+        self.render(self.gp_file, None, data)
+        self.icons(data['self.icon_file'], data['self.logo_file'])
         os.system('gradle wrapper')
-        if os.name == 'nt':
-            os.system('gradlew assembleDebug')            
-        else:
-            os.system('chmod +x gradlew')
-            os.system('./gradlew assembleDebug')            
+        if os.name != 'nt':
+            os.system(f'chmod +x {self.gradlew}')
+        os.system(f'{self.gradlew} assembleDebug')            
 
     def run(self):              
         if os.name != 'nt':
-            os.system(f"chmod +x {os.path.join(HOME, '.py2apk', 'android-sdk', 'emulator', 'emulator')}")
-            os.system(f"chmod +x {os.path.join(HOME, '.py2apk', 'android-sdk', 'platform-tools', 'adb')}")
+            os.system(f"chmod +x {os.path.join(self.home, '.py2apk', 'android-sdk', 'emulator', 'emulator')}")
+            os.system(f"chmod +x {os.path.join(self.home, '.py2apk', 'android-sdk', 'platform-tools', 'adb')}")
         subprocess.run(['adb', 'devices'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) 
         emu = subprocess.check_output(['emulator', '-list-avds']).decode().strip()
         if 'py2apk_emu' not in emu:
@@ -230,17 +267,13 @@ class Py2Apk():
         data_toml = toml.load('app.toml')
         data = data_toml['data']
         data['version_code'] = data['version_name'].split('.')[0]        
-        self.render(GRADLE_FILE, None, data)
+        self.render(self.gradle_file, None, data)
         key_pass = getpass('Enter keystore password: ')
         key_name = data['package_name'].replace('.', '_')
         if not os.path.exists(f'{key_name}.jks'):
             os.system(f'keytool -genkey -v -keystore {key_name}.jks -keyalg RSA -keysize 2048 -validity 10000 -alias {key_name} -storepass {key_pass} -keypass {key_pass}')
-        if os.name == 'nt':
-            gdl = 'gradle'
-        else:
-            gdl = './gradlew'
-        os.system(f'{gdl} assembleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
-        os.system(f'{gdl} bundleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
+        os.system(f'{self.gradlew} assembleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
+        os.system(f'{self.gradlew} bundleRelease -PstoreFile="{key_name}.jks" -PstorePassword="{key_pass}" -PkeyAlias="{key_name}" -PkeyPassword="{key_pass}"')
 
     def verify(self):
         app_name = os.path.basename(os.getcwd())

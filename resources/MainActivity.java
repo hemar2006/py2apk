@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if(appId != "ca-app-pub-3940256099942544~3347511713") {
+        if(appId != null && !bannerPub.trim().isEmpty()) {
             MobileAds.initialize(this, new OnInitializationCompleteListener() {
                 @Override
                 public void onInitializationComplete(InitializationStatus initializationStatus) {}

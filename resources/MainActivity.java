@@ -53,7 +53,8 @@ public class MainActivity extends Activity {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 mWebView.loadUrl(request.getUrl().toString());
                 return true;
-            }            
+            }
+            
             @Override
             public void onPageFinished(WebView view, String url) {                
                 new Handler().postDelayed(new Runnable(){

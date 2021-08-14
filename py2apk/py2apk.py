@@ -222,6 +222,7 @@ class Py2Apk():
         self.render(self.style_file, os.path.join('src', 'main', 'res', 'values'), data)
         self.render(self.color_file, os.path.join('src', 'main', 'res', 'values'), data)
         self.render(self.bg_file, os.path.join('src', 'main', 'res', 'drawable'), data)
+        shutil.rmtree(os.path.join('src', 'main', 'java'))
         dirs = data['package_name'].split('.')        
         self.render(self.java_file, os.path.join('src', 'main', 'java', *dirs), data)       
         data['version_code'] = data['version_name'].split('.')[0]        

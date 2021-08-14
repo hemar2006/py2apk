@@ -19,6 +19,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdListener;
 
 public class MainActivity extends Activity {
     private String appId = "${app_id}";
@@ -36,7 +37,13 @@ public class MainActivity extends Activity {
             MobileAds.initialize(this, new OnInitializationCompleteListener() {
                 @Override
                 public void onInitializationComplete(InitializationStatus initializationStatus) {}
-            });            
+            });
+            if(bannerPub != null && !bannerPub.trim().isEmpty()) {
+                createLoadBanner();
+            }
+            if(interstitialPub != null && !interstitialPub.trim().isEmpty()) {
+                createLoadInterstitial();
+            }          
         }       
         mWebView = findViewById(R.id.activity_main_webview);
         WebSettings webSettings = mWebView.getSettings();
@@ -62,7 +69,7 @@ public class MainActivity extends Activity {
                         findViewById(R.id.splashscreen).setVisibility(View.GONE);                        
                         findViewById(R.id.activity_main_webview).setVisibility(View.VISIBLE);
                         if(bannerPub != null && !bannerPub.trim().isEmpty()) {                            
-                            createLoadBanner();
+                            findViewById(R.id.adView).setVisibility(View.VISIBLE);
                         }                
                     }
                 }, 1000);
@@ -70,7 +77,7 @@ public class MainActivity extends Activity {
                     new Handler().postDelayed(new Runnable(){
                         @Override
                         public void run() {                        
-                            createLoadInterstitial();                                                             
+                            mInterstitialAd.show(MainActivity.this);                                                                                                                 
                         }
                     }, ${interstitial_time}000);
                 }                            
@@ -106,8 +113,7 @@ public class MainActivity extends Activity {
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                 mInterstitialAd = null;
             }
-        });
-        mInterstitialAd.show(MainActivity.this);
+        });                
     }
 
     public void createLoadBanner() {
@@ -121,8 +127,8 @@ public class MainActivity extends Activity {
             }
 
             @Override
-            public void onAdClosed() {
-                super.onAdClosed();
+            public void onAdFailedToLoad(LoadAdError adError) {
+                super.onAdFailedToLoad(adError);
             }
 
             @Override
@@ -131,16 +137,15 @@ public class MainActivity extends Activity {
             }
 
             @Override
-            public void onAdLeftApplication() {
-                super.onAdLeftApplication();
+            public void onAdClicked() {
+                super.onAdClicked();
             }
 
             @Override
-            public void onAdFailedToLoad(int errorCode) {
-                super.onAdFailedToLoad(errorCode);
-            }
-        });
-        findViewById(R.id.adView).setVisibility(View.VISIBLE);
+            public void onAdClosed() {
+                super.onAdClosed();
+            }            
+        });        
     }
 
     @Override

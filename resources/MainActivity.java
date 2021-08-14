@@ -36,42 +36,7 @@ public class MainActivity extends Activity {
             MobileAds.initialize(this, new OnInitializationCompleteListener() {
                 @Override
                 public void onInitializationComplete(InitializationStatus initializationStatus) {}
-            });
-            if(bannerPub != null && !bannerPub.trim().isEmpty()) {
-                mAdView = findViewById(R.id.adView);
-                AdRequest adRequest = new AdRequest.Builder().build();
-                mAdView.loadAd(adRequest);
-            }
-            if(interstitialPub != null && !interstitialPub.trim().isEmpty()) {
-                AdRequest adRequest = new AdRequest.Builder().build();
-                InterstitialAd.load(this, interstitialPub, adRequest, new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        mInterstitialAd = interstitialAd;
-                        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
-                            @Override
-                            public void onAdDismissedFullScreenContent() {
-                                mInterstitialAd = null;
-                            }
-
-                            @Override
-                            public void onAdFailedToShowFullScreenContent(AdError adError) {
-                                mInterstitialAd = null;
-                            }
-
-                            @Override
-                            public void onAdShowedFullScreenContent() {                        
-                                mInterstitialAd = null;                        
-                            }
-                        });                        
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        mInterstitialAd = null;
-                    }
-                });                
-            }
+            });            
         }       
         mWebView = findViewById(R.id.activity_main_webview);
         WebSettings webSettings = mWebView.getSettings();
@@ -94,23 +59,88 @@ public class MainActivity extends Activity {
                 new Handler().postDelayed(new Runnable(){
                     @Override
                     public void run() {
-                        findViewById(R.id.splashscreen).setVisibility(View.GONE);
-                        if(bannerPub != null && !bannerPub.trim().isEmpty()) {
-                            findViewById(R.id.adView).setVisibility(View.VISIBLE);
-                        } 
-                        findViewById(R.id.activity_main_webview).setVisibility(View.VISIBLE);                 
+                        findViewById(R.id.splashscreen).setVisibility(View.GONE);                        
+                        findViewById(R.id.activity_main_webview).setVisibility(View.VISIBLE);
+                        if(bannerPub != null && !bannerPub.trim().isEmpty()) {                            
+                            createLoadBanner();
+                        }                
                     }
                 }, 1000);
                 if(interstitialPub != null && !interstitialPub.trim().isEmpty()) {
                     new Handler().postDelayed(new Runnable(){
                         @Override
                         public void run() {                        
-                            mInterstitialAd.show(MainActivity.this);                                                             
+                            createLoadInterstitial();                                                             
                         }
                     }, ${interstitial_time}000);
                 }                            
             }
         });        
+    }
+
+    public void createLoadInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(this, interstitialPub, adRequest, new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                mInterstitialAd = interstitialAd;
+                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        mInterstitialAd = null;
+                    }
+
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                        mInterstitialAd = null;
+                    }
+
+                    @Override
+                    public void onAdShowedFullScreenContent() {                        
+                        mInterstitialAd = null;                        
+                    }
+                });                        
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                mInterstitialAd = null;
+            }
+        });
+        mInterstitialAd.show(MainActivity.this);
+    }
+
+    public void createLoadBanner() {
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+            }
+
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+            }
+
+            @Override
+            public void onAdOpened() {
+                super.onAdOpened();
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                super.onAdLeftApplication();
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                super.onAdFailedToLoad(errorCode);
+            }
+        });
+        findViewById(R.id.adView).setVisibility(View.VISIBLE);
     }
 
     @Override

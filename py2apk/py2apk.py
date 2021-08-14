@@ -166,6 +166,7 @@ class Py2Apk():
         banner_pub = input('Admob Banner []: ') or ''          
         interstitial_pub = input('Admob Interstitial []: ') or ''
         interstitial_time = input('Interstitial Time Show [10]: ') or 10
+        screen_orientation = input('Screen orientation: [portrait]: ') or 'portrait'
         data_toml = {'data': {
             'app_name': app_name,            
             'package_name': package_name,            
@@ -178,7 +179,8 @@ class Py2Apk():
             'app_id': app_id,
             'banner_pub': banner_pub,
             'interstitial_pub': interstitial_pub,
-            'interstitial_time': interstitial_time
+            'interstitial_time': interstitial_time,
+            'screen_orientation': screen_orientation
         }}
         with open('app.toml', 'w') as f:
             toml.dump(data_toml, f)

@@ -208,7 +208,8 @@ class Py2Apk():
         self.render(self.bg_file, os.path.join('src', 'main', 'res', 'drawable'), data)
         dirs = data['package_name'].split('.')       
         self.render(self.java_file, os.path.join('src', 'main', 'java', *dirs), data)     
-        data['version_code'] = data['version_name'].split('.')[0]        
+        data['version_code'] = data['version_name'].split('.')[0]
+        data['good_app_name'] = data['app_name'].replace(' ', '-')      
         self.render(self.gradle_file, None, data)
         self.render(self.gp_file, None, data)
         self.render(self.html_file, os.path.join('src', 'main', 'assets'), data)
@@ -227,7 +228,8 @@ class Py2Apk():
         shutil.rmtree(os.path.join('src', 'main', 'java'))
         dirs = data['package_name'].split('.')        
         self.render(self.java_file, os.path.join('src', 'main', 'java', *dirs), data)       
-        data['version_code'] = data['version_name'].split('.')[0]        
+        data['version_code'] = data['version_name'].split('.')[0]
+        data['good_app_name'] = data['app_name'].replace(' ', '-')    
         self.render(self.gradle_file, None, data)
         self.render(self.gp_file, None, data)
         self.icons(data['icon_file'], data['logo_file'])
@@ -256,16 +258,17 @@ class Py2Apk():
         data_toml = toml.load('app.toml')
         data = data_toml['data']
         package = data['package_name']
-        app_name = os.path.basename(os.getcwd())
+        app_name = data['app_name'].replace(' ', '-')
         os.system(f'adb uninstall {package}')
-        debug_apk = os.path.join(os.getcwd(), 'build', 'outputs', 'apk', 'debug', f'{app_name}-debug.apk')
+        debug_apk = os.path.join(os.getcwd(), 'build', 'outputs', 'apk', 'debug', f'{app_name}.apk')
         os.system(f"adb install {debug_apk}")
         os.system(f'adb shell am start -n {package}/{package}.MainActivity')
 
     def package(self):        
         data_toml = toml.load('app.toml')
         data = data_toml['data']
-        data['version_code'] = data['version_name'].split('.')[0]        
+        data['version_code'] = data['version_name'].split('.')[0]
+        data['good_app_name'] = data['app_name'].replace(' ', '-')       
         self.render(self.gradle_file, None, data)
         key_pass = getpass('Enter keystore password: ')
         key_name = data['package_name'].replace('.', '_')
@@ -277,4 +280,4 @@ class Py2Apk():
     def verify(self):
         app_name = os.path.basename(os.getcwd())
         os.system(f'jarsigner -verify -verbose -certs "{os.getcwd()}/build/outputs/apk/release/{app_name}-release.apk"')
-             
+        

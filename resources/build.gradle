@@ -53,13 +53,18 @@ android {
             storeFile file(getStore())
             storePassword getStorePassword()
             keyAlias getKeyAlias()
-            keyPassword getKeyPassword()
+            keyPassword getKeyPassword()            
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release         
+            signingConfig signingConfigs.release 
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "${good_app_name}.apk"
+                }
+            }        
         }        
     }   
 }

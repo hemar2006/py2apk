@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
                 createLoadInterstitial();
             }          
         }       
-        mWebView = findViewById(R.id.activity_main_webview);
+        mWebView = findViewById(R.id.activity_main_webview);        
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
@@ -53,6 +53,7 @@ public class MainActivity extends Activity {
         webSettings.setDatabaseEnabled(true);
         webSettings.setAllowFileAccessFromFileURLs(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
+        webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         mWebView.loadUrl("${url_path}");
         mWebView.setWebViewClient(new WebViewClient() {
             @Override

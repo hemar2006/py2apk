@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebChromeClient;
+import android.widget.FrameLayout;
 import android.webkit.SslErrorHandler;
 import android.net.http.SslError;
 import android.view.View;
@@ -30,6 +31,9 @@ public class MainActivity extends Activity {
     private InterstitialAd mInterstitialAd;
     private AdView mAdView;
     private WebView mWebView;
+    private FrameLayout fullscreenContainer;
+    private WebChromeClient.CustomViewCallback customViewCallback;
+    private View mCustomView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,7 @@ public class MainActivity extends Activity {
                 createLoadInterstitial();
             }
         }
+        fullscreenContainer = findViewById(R.id.fullscreenContainer);
         mWebView = findViewById(R.id.activity_main_webview);
         mWebView.setInitialScale(1);
         mWebView.getSettings().setUseWideViewPort(true);
@@ -54,47 +59,68 @@ public class MainActivity extends Activity {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setSupportMultipleWindows(true);
         mWebView.setVerticalScrollBarEnabled(false);
-        mWebView.loadUrl("${url_path}");
-        mWebView.setWebChromeClient(new WebChromeClient(){
-            @Override
-            public void onReceivedTitle(WebView view, String title) {
-                 getWindow().setTitle(title);
-            }
-        });
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return true;
             }
-            
+
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                 handler.proceed();
             }
-                      
+
             @Override
-            public void onPageFinished(WebView view, String url) {                
+            public void onPageFinished(WebView view, String url) {
                 new Handler().postDelayed(new Runnable(){
                     @Override
                     public void run() {
-                        findViewById(R.id.splashscreen).setVisibility(View.GONE);                        
+                        findViewById(R.id.splashscreen).setVisibility(View.GONE);
                         findViewById(R.id.activity_main_webview).setVisibility(View.VISIBLE);
-                        if(bannerPub != null && !bannerPub.trim().isEmpty()) {                            
+                        if(bannerPub != null && !bannerPub.trim().isEmpty()) {
                             findViewById(R.id.adView).setVisibility(View.VISIBLE);
-                        }                
+                        }
                     }
                 }, 1000);
                 if(interstitialPub != null && !interstitialPub.trim().isEmpty()) {
                     new Handler().postDelayed(new Runnable(){
                         @Override
-                        public void run() {                        
-                            mInterstitialAd.show(MainActivity.this);                                                                                                                 
+                        public void run() {
+                            mInterstitialAd.show(MainActivity.this);
                         }
                     }, ${interstitial_time}000);
-                }                            
+                }
             }
-        });        
+        });
+        mWebView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onHideCustomView() {
+                if (mCustomView == null) {
+                    return;
+                }
+                mWebView.setVisibility(View.VISIBLE);
+                fullscreenContainer.setVisibility(View.GONE);
+                mCustomView.setVisibility(View.GONE);
+                fullscreenContainer.removeView(mCustomView);
+                customViewCallback.onCustomViewHidden();
+                mCustomView = null;
+            }
+
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback callback) {
+                if (mCustomView != null) {
+                    onHideCustomView();
+                    return;
+                }
+                mCustomView = view;
+                mWebView.setVisibility(View.GONE);
+                fullscreenContainer.setVisibility(View.VISIBLE);
+                fullscreenContainer.addView(view);
+                customViewCallback = callback;
+            }
+        });
+        mWebView.loadUrl("${url_path}");
     }
 
     public void createLoadInterstitial() {
@@ -115,17 +141,17 @@ public class MainActivity extends Activity {
                     }
 
                     @Override
-                    public void onAdShowedFullScreenContent() {                        
-                        mInterstitialAd = null;                        
+                    public void onAdShowedFullScreenContent() {
+                        mInterstitialAd = null;
                     }
-                });                        
+                });
             }
 
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                 mInterstitialAd = null;
             }
-        });                
+        });
     }
 
     public void createLoadBanner() {
@@ -156,8 +182,8 @@ public class MainActivity extends Activity {
             @Override
             public void onAdClosed() {
                 super.onAdClosed();
-            }            
-        });        
+            }
+        });
     }
 
     @Override
@@ -168,4 +194,5 @@ public class MainActivity extends Activity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
 }

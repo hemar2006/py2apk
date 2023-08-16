@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebChromeClient
 import android.webkit.SslErrorHandler;
 import android.net.http.SslError;
 import android.view.View;
@@ -30,7 +31,7 @@ public class MainActivity extends Activity {
     private AdView mAdView;
     private WebView mWebView;
 
-    @Override   
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -44,15 +45,22 @@ public class MainActivity extends Activity {
             }
             if(interstitialPub != null && !interstitialPub.trim().isEmpty()) {
                 createLoadInterstitial();
-            }          
-        }       
+            }
+        }
         mWebView = findViewById(R.id.activity_main_webview);
         mWebView.setInitialScale(1);
         mWebView.getSettings().setUseWideViewPort(true);
         mWebView.getSettings().setLoadWithOverviewMode(true);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.setVerticalScrollBarEnabled(false);      
+        mWebView.getSettings().setSupportMultipleWindows(true);
+        mWebView.setVerticalScrollBarEnabled(false);
         mWebView.loadUrl("${url_path}");
+        mWebView.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                 getWindow().setTitle(title);
+            }
+        });
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {

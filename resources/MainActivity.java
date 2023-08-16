@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.webkit.WebChromeClient
+import android.webkit.WebChromeClient;
 import android.webkit.SslErrorHandler;
 import android.net.http.SslError;
 import android.view.View;
